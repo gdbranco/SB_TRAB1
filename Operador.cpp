@@ -9,8 +9,5 @@ Operador::Operador(string _op)
 
 void Operador::validar(string _op)
 {
-	if(!(validados.pesquisar(_op))
-	{
-		throw invalid_argument("Operador/Diretiva invalidos.");
-	}	
+    throw invalid_argument("Operador/Diretiva invalidos.");
 }

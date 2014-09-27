@@ -16,14 +16,14 @@ protected:
 public:
 	void setValor(string);
 	string getValor() const;
-}
-inline void TipoBasico::getValor() const
+};
+inline string TipoBasico::getValor() const
 {
 	return valor;
 }
 
 inline void TipoBasico::setValor(string _valor)
 {
-	this->valor _valor;
+	this->valor = _valor;
 }
 #endif

@@ -2,7 +2,7 @@
 /*--------------------------*/
 using namespace std;
 /*-------------------------*/
-Line::Line(int _linha=-1,vector<string> _tokens):
+Line::Line(vector<string> _tokens,int _linha=-1):
 	n_linha(_linha),tokens(_tokens)
 {}
 

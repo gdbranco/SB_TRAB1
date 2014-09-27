@@ -1,6 +1,6 @@
 #ifndef OP_H
 #define OP_H
-#include "Basicos.h"
+#include "Basico.h"
 #include "OpV.h"
 #include <vector>
 class Operador:public TipoBasico
@@ -10,5 +10,5 @@ private:
 public:
 	Operador(){};
 	Operador(string);
-}
+};
 #endif

@@ -14,7 +14,7 @@ int main()
 {
 	OpV validos;
 	validos.showValidos();
-	cout<<endl;
+	//cout<<endl;
 	//string memoria;
 	//toMEM("teste.asm", memoria);
 	//	cout<<memoria<<endl;
@@ -42,7 +42,7 @@ string primeira_passagi(fstream memoria)
 	vector<string> tokens;
 	string s;
 	getline(memoria, s);
-	cout << s << endl;	
+	cout << s << endl;
 	return "oi";
 }
 
