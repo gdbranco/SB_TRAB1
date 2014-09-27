@@ -4,6 +4,7 @@
 #include<vector>
 #include<sstream>
 #include<fstream>
+#include "OpV.h"
 using namespace std;
 /*Ignora comentario e ajeita os EQU*/
 string primeira_passagi(string arquivao);
@@ -11,10 +12,13 @@ void toMEM(string nome, string &memoria);
 
 int main()
 {
-	string memoria;
-	toMEM("teste.asm", memoria);
+	OpV validos;
+	validos.showValidos();
+	cout<<endl;
+	//string memoria;
+	//toMEM("teste.asm", memoria);
 	//	cout<<memoria<<endl;
-	primeira_passagi(memoria);
+	//primeira_passagi(memoria);
 	return 0;
 }
 
@@ -42,20 +46,27 @@ string primeira_passagi(fstream memoria)
 	return "oi";
 }
 
-string primeira_passagi(string memoria)
+/*linha pre_proc(string memoria)
 {
+
 	stringstream s_str(memoria);
 	char * pch;
-	string s;
+	vector<linha> linhas;
+	linha _aux;
+	int _n_linha=0;
 	getline(s_str,s);
 	do
 	{
+		_n_linha++;
+		_aux.n_linha = _n_linha;
 		pch = strtok((char*)s.c_str(),"\t ");
 		while(pch!=NULL)
 		{
 			cout << pch << endl;
 			pch = strtok(NULL,"\t ");
+			_aux.tokens.push_back(new string(pch));
 		}
+	linhas.push_back(
 	}while(getline(s_str, s));
 	return "oi";
-}
+}*/
