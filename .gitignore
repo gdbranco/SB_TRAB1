@@ -30,3 +30,7 @@
 *.cbp
 *.depend
 *.layout
+
+#Python#
+########
+*.py
