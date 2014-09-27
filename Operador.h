@@ -7,8 +7,12 @@ class Operador:public TipoBasico
 {
 private:
 	void validar(string);
+	static vector<string> Validos;
 public:
-	Operador(){};
+	Operador(){setValidos();};
 	Operador(string);
+	void setValidos();
+	void showValidos();
+	int pesquisar(string);
 };
 #endif

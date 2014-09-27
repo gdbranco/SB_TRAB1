@@ -4,7 +4,7 @@
 #include<vector>
 #include<sstream>
 #include<fstream>
-#include "OpV.h"
+#include "Operador.h"
 using namespace std;
 /*Ignora comentario e ajeita os EQU*/
 string primeira_passagi(string arquivao);
@@ -12,8 +12,8 @@ void toMEM(string nome, string &memoria);
 
 int main()
 {
-	OpV validos;
-	validos.showValidos();
+	Operador teste;
+	teste.showValidos();
 	//cout<<endl;
 	//string memoria;
 	//toMEM("teste.asm", memoria);
