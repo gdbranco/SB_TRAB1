@@ -1,12 +1,13 @@
-.phony: Opv.o prog
+.phony: Operador.o prog
 
 all: prog
 
-prog: OpV.o
-	g++ main.cpp OpV.o -o teste
+prog: Operador.o
+	g++ main.cpp Operador.o -o teste
 
-OpV.o: OpV.h
-	g++ -ansi -Wall OpV.cpp -c
+Operador.o: Operador.h
+	g++ -ansi -Wall Operador.cpp -c
 
 clean:
 	rm -f *.o
+	rm -f teste

@@ -1,8 +1,9 @@
 #ifndef OP_H
 #define OP_H
 #include "Basico.h"
-#include "OpV.h"
 #include <vector>
+#include <fstream>
+#define operadoresV "operadoresValidos.txt"
 class Operador:public TipoBasico
 {
 private:
