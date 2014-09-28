@@ -8,7 +8,7 @@ using namespace std;
 class Rotulo:public TipoBasico
 {
 private:
-	void validar(string);
+	void validar(string _label);
 public:
 	Rotulo(){};
 	Rotulo(string);

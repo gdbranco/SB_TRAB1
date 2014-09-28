@@ -14,7 +14,7 @@ void toMEM(string nome, string &memoria);
 
 int main()
 {
-    Macro macro("Label:","add 1 2\nsub 3 2\n");
+    Macro macro("TROCA AQUI","add 1 2\nsub 3 2\n");
     cout << macro;
 	//Operador teste;
 	//teste.showValidos();
