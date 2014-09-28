@@ -4,7 +4,9 @@
 #include<vector>
 #include<sstream>
 #include<fstream>
+/**Testes**/
 #include "Operador.h"
+#include "Macro.h"
 using namespace std;
 /*Ignora comentario e ajeita os EQU*/
 string primeira_passagi(string arquivao);
@@ -12,8 +14,10 @@ void toMEM(string nome, string &memoria);
 
 int main()
 {
-	Operador teste;
-	teste.showValidos();
+    Macro macro("Label:","add 1 2\nsub 3 2\n");
+    cout << macro;
+	//Operador teste;
+	//teste.showValidos();
 	//cout<<endl;
 	//string memoria;
 	//toMEM("teste.asm", memoria);

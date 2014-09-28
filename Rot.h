@@ -12,5 +12,6 @@ private:
 public:
 	Rotulo(){};
 	Rotulo(string);
+	friend ostream& operator<<(ostream& os, const Rotulo& it);
 };
 #endif

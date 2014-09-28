@@ -23,11 +23,11 @@ public:
 
 inline int Line::get_n_linha() const
 {
-	return n_linha;
+	return this->n_linha;
 }
 
 inline vector<string> Line::get_tokens() const
 {
-	return tokens;
+	return this->tokens;
 }
 #endif

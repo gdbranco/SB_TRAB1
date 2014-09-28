@@ -49,14 +49,14 @@ typedef struct _diretiva
 class Operador:public TipoBasico
 {
 private:
-	void validar(string);
+	void validar(string _operador);
 	static vector<inst> inst_validas;
 	static vector<diretiva> diretivas_validas;
 	void setInst_validas();
 	void setDiretivas_validas();
 public:
 	Operador(){setInst_validas();setDiretivas_validas();};
-	Operador(string);
+	Operador(string _operador);
 	void showValidos();
 	int pesquisar(string);
 };
