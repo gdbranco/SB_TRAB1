@@ -3,31 +3,57 @@
 /*---------------------*/
 #include<vector>
 #include<string>
+#include "Rot.h"
+#include "Operador.h"
+#include "Operando.h"
+#include "comment.h"
 /*---------------------*/
 using namespace std;
 /*---------------------*/
 class Line
 {
 private:
-	int n_linha;
-	vector<string> tokens;
+	int nlinha;
+	Rotulo label;
+	Operador op;
+	vector<Operando> to_op;
+	//Comment ignore;
+	//vector<string> tokens;
 public:
     Line(){};
-    Line(vector<string> _tokens,int _linha);
-    int get_n_linha() const;
-    vector<string> get_tokens() const;
-    void set_n_Linha(const int& _linha);
-    void set_Tokens(const vector<string>& _tokens);
+    Line(Rotulo _label,Operador _op,vector<Operando> _to_op,int _linha);
+    /*Gets*/
+    int getNlinha() const;
+    Rotulo getRotulo() const;
+    Operador getOperador() const;
+    vector<Operando> getOperandos() const;
+    /*Sets*/
+    void setNlinha(const int& _linha);
+    void setRotulo(const Rotulo& _rot);
+    void setOperador(const Operador& _op);
+    void setOperandos(const vector<Operando>& _to_op);
+    /*Output*/
+    friend ostream& operator<<(ostream& os, const Line& it);
 };
 
 
-inline int Line::get_n_linha() const
+inline int Line::getNlinha() const
 {
-	return this->n_linha;
+	return this->nlinha;
 }
 
-inline vector<string> Line::get_tokens() const
+inline Rotulo Line::getRotulo() const
 {
-	return this->tokens;
+    return this->label;
+}
+
+inline Operador Line::getOperador() const
+{
+    return this->op;
+}
+
+inline vector<Operando> Line::getOperandos() const
+{
+    return this->to_op;
 }
 #endif

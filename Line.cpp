@@ -2,16 +2,43 @@
 /*--------------------------*/
 using namespace std;
 /*-------------------------*/
-Line::Line(vector<string> _tokens,int _linha=-1):
-	n_linha(_linha),tokens(_tokens)
-{}
-
-void Line::set_n_Linha(const int& _linha)
+Line::Line(Rotulo _label,Operador _op,vector<Operando> _to_op,int _linha=-1):
+	nlinha(_linha),label(_label),op(_op)
 {
-	this->n_linha = _linha;
+    setOperandos(_to_op);
 }
 
-void Line::set_Tokens(const vector<string>& _tokens)
+void Line::setNlinha(const int& _linha)
 {
-	this->tokens = _tokens;
+	this->nlinha = _linha;
+}
+
+//void Line::set_Tokens(const vector<string>& _tokens)
+//{
+//	this->tokens = _tokens;
+//}
+
+void Line::setOperador(const Operador& _op)
+{
+    this->op = _op;
+}
+
+void Line::setOperandos(const vector<Operando>& _to_op)
+{
+    this->to_op = _to_op;
+}
+
+void Line::setRotulo(const Rotulo& _label)
+{
+    this->label = _label;
+}
+
+ostream& operator<<(ostream& os, const Line& it)
+{
+    os << it.label << ' ' << it.op << ' ';
+    for(unsigned int i=0;i<it.to_op.size();i++)
+    {
+        cout << it.to_op.at(i) << ' ';
+    }
+    return os;
 }

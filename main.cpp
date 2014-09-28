@@ -5,27 +5,34 @@
 #include<sstream>
 #include<fstream>
 /**Testes**/
-#include "Operador.h"
+#include "Line.h"
 #include "Macro.h"
 using namespace std;
 /*Ignora comentario e ajeita os EQU*/
-string primeira_passagi(string arquivao);
 void toMEM(string nome, string &memoria);
 
 int main()
 {
-    Macro macro("TROCA AQUI","add 1 2\nsub 3 2\n");
-    cout << macro;
+    vector<Operando> to_op;
+    to_op.push_back(Operando("FACT"));
+    to_op.push_back(Operando("ONE"));
+    Line line(Rotulo("_L1:"),Operador("ADD"),to_op,0);
+    cout <<line;
+    /**Teste macro*/
+//    Macro macro("TROCA AQUI","add 1 2\nsub 3 2\n");
+//    cout << macro;
+    /**Teste das inst e dir validas*/
 	//Operador teste;
 	//teste.showValidos();
 	//cout<<endl;
+    /**Primeiro teste de pre proc !funciona*/
 	//string memoria;
 	//toMEM("teste.asm", memoria);
 	//	cout<<memoria<<endl;
 	//primeira_passagi(memoria);
 	return 0;
 }
-
+/**inutil eças funcao*/
 void toMEM(string nome, string &memoria)
 {
 	size_t tam;
@@ -39,15 +46,6 @@ void toMEM(string nome, string &memoria)
 	memoria.assign(buffer);
 	sc.close();
 	return;
-}
-
-string primeira_passagi(fstream memoria)
-{
-	vector<string> tokens;
-	string s;
-	getline(memoria, s);
-	cout << s << endl;
-	return "oi";
 }
 
 /*linha pre_proc(string memoria)

@@ -59,5 +59,6 @@ public:
 	Operador(string _operador);
 	void showValidos();
 	int pesquisar(string);
+	friend ostream& operator<<(ostream& os, const Operador& it);
 };
 #endif

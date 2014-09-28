@@ -109,3 +109,10 @@ void Operador::showValidos()
         cout << diretivas_validas.at(i) << endl;
     }
 }
+
+ostream& operator<<(ostream& os, const Operador& it)
+{
+    os << it.getValor();
+    return os;
+}
+
