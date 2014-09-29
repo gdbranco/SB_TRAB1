@@ -24,6 +24,7 @@ inline string TipoBasico::getValor() const
 
 inline void TipoBasico::setValor(string _valor)
 {
+    validar(_valor);
 	this->valor = _valor;
 }
 #endif

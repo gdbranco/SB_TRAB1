@@ -25,6 +25,7 @@
 ########
 ./git/bin
 ./git/obj
+./git/bkp
 
 #C::B#
 ######

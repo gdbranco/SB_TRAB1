@@ -5,6 +5,7 @@
 #include<sstream>
 #include<fstream>
 /**Testes**/
+#include "parser.h"
 #include "Line.h"
 #include "Macro.h"
 using namespace std;
@@ -13,11 +14,16 @@ void toMEM(string nome, string &memoria);
 
 int main()
 {
-    vector<Operando> to_op;
-    to_op.push_back(Operando("FACT"));
-    to_op.push_back(Operando("ONE"));
-    Line line(Rotulo("_L1:"),Operador("ADD"),to_op,0);
-    cout <<line;
+    /**Teste do parser**/
+//    cout << PARSER::islabel("L1:") << endl;
+//    cout << PARSER::islabel("!L1") << endl;
+//    cout << PARSER::isdir("CONST") << endl;
+//    cout << PARSER::isdir("!CONST") << endl;
+//    cout << PARSER::isinst("ADD")  << endl;
+//    cout << PARSER::isinst("!ADD") << endl;
+//    cout << PARSER::iscomment(";comment") << endl;
+//    cout << PARSER::iscomment("!comment") << endl;
+    PARSER::pre_proc("teste.asm");
     /**Teste macro*/
 //    Macro macro("TROCA AQUI","add 1 2\nsub 3 2\n");
 //    cout << macro;
