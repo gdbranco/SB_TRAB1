@@ -3,7 +3,7 @@ void PARSER::pre_proc(string _arquivo)
 {
     fstream arq;
     arq.open(_arquivo.c_str());
-    bool DATA_FIRST;
+    bool DATA_FIRST=true;
     int linha = 0;
     string s;
     vector<pair<string,int> > lista;
@@ -65,7 +65,8 @@ void PARSER::pre_proc(string _arquivo)
 //                cin.get();
                 s = s.substr(0,found-1);
             }
-            if((s.find(diretivas::IF)==string::npos) xor !nextline)
+	    //(s.find(diretivas::EQU)==string::npos) xor 
+            if(((s.find(diretivas::EQU)==string::npos) and (s.find(diretivas::IF)==string::npos)) xor !nextline)
             {
                 cout << s << endl;
             }
@@ -84,7 +85,7 @@ void PARSER::pre_proc(string _arquivo)
                         pch = strtok(NULL,"\t ");
                         for(unsigned int i=0;i<lista.size();i++)
                         {
-                            if((!strcmp(pch,lista[i].first.c_str()) && !lista[i].second))
+                            if((!strcmp(pch,lista[i].first.c_str()) && !lista[i].second)||(!atoi(pch)))
                             {
                                 nextline = 0;
                             }
@@ -136,7 +137,7 @@ int PARSER::isdir(string _dir)
         return 1;
     return -1;
 }
-
+//retorno = (inst valida) ? inst.opcode : 1
 int PARSER::isinst(string _inst)
 {
     if(_inst == instructions::ADD.first)

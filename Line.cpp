@@ -21,6 +21,7 @@ void Line::setNlinha(const int& _linha)
 void Line::setOperador(const Operador& _op)
 {
     this->op = _op;
+
 }
 
 void Line::setOperandos(const vector<Operando>& _to_op)

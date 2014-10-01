@@ -6,7 +6,6 @@
 #include<fstream>
 /**Testes**/
 #include "parser.h"
-#include "Line.h"
 #include "Macro.h"
 using namespace std;
 /*Ignora comentario e ajeita os EQU*/

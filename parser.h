@@ -9,7 +9,13 @@
 #include <utility>
 #include "defines.h"
 #include <fstream>
+//TODO:  
 using namespace std;
+typedef struct _linha
+{
+	int nlinha;
+	vector<string> tokens;
+} linha;
 class PARSER
 {
 private:
@@ -19,5 +25,6 @@ public:
     static int isinst(string _inst);
     static int iscomment(string _comment);
     static void pre_proc(string _arquivo);
+    static void pre_proc(vector<string> _mem);
 };
 #endif // PARSER_H
