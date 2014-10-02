@@ -1,4 +1,33 @@
 #include "parser.h"
+vector<Linha> PARSER::toMEM(string nome)
+{
+    vector<Linha> memoria;
+    vector<string> _tokens;
+    int _linha=0;
+	fstream sc;
+	char* pch;
+	sc.open(nome.c_str());
+	string s;
+	while(getline(sc,s))
+    {
+        if(s!="")
+        {
+            pch = strtok((char*)s.c_str(),"\t ");
+            while(pch!=NULL)
+            {
+                _tokens.push_back(string(pch));
+//                cout << pch << endl;
+                pch = strtok(NULL,"\t ");
+            }
+        }
+        _linha++;
+        memoria.push_back(Linha(_linha,_tokens));
+        _tokens.clear();
+    }
+	sc.close();
+	return memoria;
+}
+
 void PARSER::pre_proc(string _arquivo)
 {
     fstream arq;
@@ -65,7 +94,7 @@ void PARSER::pre_proc(string _arquivo)
 //                cin.get();
                 s = s.substr(0,found-1);
             }
-	    //(s.find(diretivas::EQU)==string::npos) xor 
+	    //(s.find(diretivas::EQU)==string::npos) xor
             if(((s.find(diretivas::EQU)==string::npos) and (s.find(diretivas::IF)==string::npos)) xor !nextline)
             {
                 cout << s << endl;

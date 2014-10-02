@@ -9,22 +9,38 @@
 #include <utility>
 #include "defines.h"
 #include <fstream>
-//TODO:  
+//TODO:
 using namespace std;
 typedef struct _linha
 {
-	int nlinha;
-	vector<string> tokens;
-} linha;
+    int nlinha;
+    vector<string> tokens;
+    _linha() {}
+    _linha(int _nlinha, vector<string> _tokens)
+    {
+        this-> nlinha = _nlinha;
+        this-> tokens = _tokens;
+    }
+    friend ostream& operator<<(ostream& os, const _linha& it)
+    {
+        os << it.nlinha << ' ';
+        for(unsigned int i =0; i<it.tokens.size(); i++)
+        {
+            cout << it.tokens[i] << ' ';
+        }
+        return os;
+    }
+} Linha;
 class PARSER
 {
 private:
 public:
-    static int islabel(string _label);
-    static int isdir(string _dir);
-    static int isinst(string _inst);
-    static int iscomment(string _comment);
-    static void pre_proc(string _arquivo);
-    static void pre_proc(vector<string> _mem);
+    static int islabel(const string _label);
+    static int isdir(const string _dir);
+    static int isinst(const string _inst);
+    static int iscomment(const string _comment);
+    static void pre_proc(const string _arquivo);
+    static void pre_proc(const vector<string> _mem);
+    static vector<Linha> toMEM(const string nome);
 };
 #endif // PARSER_H

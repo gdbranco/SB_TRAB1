@@ -9,7 +9,7 @@
 #include "Macro.h"
 using namespace std;
 /*Ignora comentario e ajeita os EQU*/
-void toMEM(string nome, string &memoria);
+
 
 int main()
 {
@@ -22,7 +22,13 @@ int main()
 //    cout << PARSER::isinst("!ADD") << endl;
 //    cout << PARSER::iscomment(";comment") << endl;
 //    cout << PARSER::iscomment("!comment") << endl;
-    PARSER::pre_proc("teste.asm");
+    vector<Linha> memoria;
+    memoria = PARSER::toMEM("teste.asm");
+    for(unsigned int i=0;i<memoria.size();i++)
+    {
+        cout << memoria[i] << endl;
+    }
+    //PARSER::pre_proc("teste.asm");
     /**Teste macro*/
 //    Macro macro("TROCA AQUI","add 1 2\nsub 3 2\n");
 //    cout << macro;
@@ -38,20 +44,7 @@ int main()
 	return 0;
 }
 //inutil eças funcao
-void toMEM(string nome, string &memoria)
-{
-	size_t tam;
-	fstream sc;
-	sc.open(nome.c_str());
-	sc.seekg(0,sc.end);
-	tam = sc.tellg();
-	sc.seekg(0,sc.beg);
-	char *buffer = new char[tam];
-	sc.read(buffer,tam-1);
-	memoria.assign(buffer);
-	sc.close();
-	return;
-}
+
 
 /*linha pre_proc(string memoria)
 {
