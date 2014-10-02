@@ -37,7 +37,7 @@ int main()
 	//primeira_passagi(memoria);
 	return 0;
 }
-/**inutil eças funcao*/
+//inutil eças funcao
 void toMEM(string nome, string &memoria)
 {
 	size_t tam;
