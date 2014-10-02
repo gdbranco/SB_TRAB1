@@ -37,7 +37,7 @@ void PARSER::pre_proc(string _arquivo)
                 {
                     string aux(pch);
                     aux = aux.substr(0,aux.length()-1);
-                    if(islabel(aux) && !strcmp((pch = strtok(NULL,"\t ")),diretivas::EQU.c_str()))
+                    if(islabel(string(pch)) && !strcmp((pch = strtok(NULL,"\t ")),diretivas::EQU.c_str()))
                     {
                         lista.push_back(make_pair(aux,atoi(pch=strtok(NULL,"\t "))));
                     }
