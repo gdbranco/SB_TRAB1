@@ -6,7 +6,6 @@
 #include<fstream>
 /**Testes**/
 #include "parser.h"
-#include "Line.h"
 #include "Macro.h"
 using namespace std;
 /*Ignora comentario e ajeita os EQU*/
@@ -38,7 +37,7 @@ int main()
 	//primeira_passagi(memoria);
 	return 0;
 }
-/**inutil eças funcao*/
+//inutil eças funcao
 void toMEM(string nome, string &memoria)
 {
 	size_t tam;
