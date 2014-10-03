@@ -24,10 +24,12 @@ int main()
 //    cout << PARSER::iscomment("!comment") << endl;
     vector<Linha> memoria;
     memoria = PARSER::toMEM("teste.asm");
-    for(unsigned int i=0;i<memoria.size();i++)
-    {
-        cout << memoria[i] << endl;
-    }
+    //for(unsigned int i=0;i<memoria.size();i++)
+    //{
+        //cout << memoria[i] << endl;
+    //}
+    PARSER::pre_proc(memoria);
+    cout << endl;
     //PARSER::pre_proc("teste.asm");
     /**Teste macro*/
 //    Macro macro("TROCA AQUI","add 1 2\nsub 3 2\n");

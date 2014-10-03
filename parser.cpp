@@ -27,7 +27,65 @@ vector<Linha> PARSER::toMEM(string nome)
 	sc.close();
 	return memoria;
 }
-
+void PARSER::memgetline(const Linha _code, string &s)
+{
+	for(unsigned int j=0;j<_code.tokens.size();j++)
+	{
+		s.append(_code.tokens[j]);
+		s.append(" ");
+	}
+	s.erase(s.length()-1);
+}
+void PARSER::pre_proc(vector<Linha> _code)
+{
+	bool DATA_FIRST=0;
+	unsigned int i = 0;
+    	vector<pair<string,int> > lista;
+	if(!_code.empty())
+	{
+		string s;
+		do
+		{
+			s.clear();
+			memgetline(_code[i++],s);
+			//i++;
+		}while(s!=sections::S_DATA && i<_code.size());
+		if(_code[i].nlinha>1)
+		{
+			DATA_FIRST=false;
+		}
+		if(DATA_FIRST)
+		{
+			cout << s << endl;
+		}
+		while(i<_code.size())
+		{
+			memgetline(_code[++i], s);
+			if(DATA_FIRST)
+				cout << s << endl;
+			if(s == diretivas::END)
+				break;
+			char *pch = strtok((char*)s.c_str(),"\t ");
+			for(unsigned int j=0;j<_code[i].tokens.size();j++)
+			{
+				string aux(_code[i].tokens[j]);
+				aux = aux.substr(0,aux.length()-1);
+				if(islabel(_code[i].tokens[j]) && _code[i].tokens[j+1] == diretivas::EQU) //!strcmp((pch = strtok(NULL,"\t ")),diretivas::EQU.c_str()))
+				{
+					lista.push_back(make_pair(aux,atoi(_code[i].tokens[j+2].c_str())));
+				}
+				//cout << pch << endl;
+				pch = strtok(NULL,"\t ");
+			}
+		}
+		//cout << s;
+		//s.clear();
+		//do
+		//{
+			
+		//}while();
+	}
+}
 void PARSER::pre_proc(string _arquivo)
 {
     fstream arq;
