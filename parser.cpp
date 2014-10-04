@@ -12,6 +12,14 @@ vector<Linha> PARSER::toMEM(string nome)
     {
         if(s!="")
         {
+            size_t found = s.find(';');
+            if(found!=string::npos)
+            {
+//                cout << s << endl;
+//                cout << found;
+//                cin.get();
+                s = s.substr(0,found-1);
+            }
             pch = strtok((char*)s.c_str(),"\t ");
             while(pch!=NULL)
             {
@@ -41,6 +49,7 @@ vector<Linha> PARSER::pre_proc(vector<Linha> code)
     unsigned int i = 0;
     vector<pair<string,int> > lista;
     vector<Linha> _code = code;
+    bool erased = false;
     if(!_code.empty())
     {
         string s;
@@ -55,6 +64,14 @@ vector<Linha> PARSER::pre_proc(vector<Linha> code)
         {
             s.clear();
             memgetline(_code[i], s);
+//            size_t found = s.find(';');
+//            if(found!=string::npos)
+//            {
+////                cout << s << endl;
+////                cout << found;
+////                cin.get();
+//                s = s.substr(0,found-1);
+//            }
             if(s == diretivas::END)
                 break;
             for(unsigned int j=0; j<_code[i].tokens.size(); j++)
@@ -66,10 +83,14 @@ vector<Linha> PARSER::pre_proc(vector<Linha> code)
                 if(islabel(_code[i].tokens[j]) && _code[i].tokens[++j] == diretivas::EQU)
                 {
                     lista.push_back(make_pair(aux,atoi(_code[i].tokens[++j].c_str())));
+                    _code.erase(_code.begin()+i);
+                    erased = true;
                 }
                 //cout << pch << endl;
             }
-            i++;
+            if(!erased)
+                i++;
+            erased = false;
         }
 //		for(unsigned int j=0;j<lista.size();j++)
 //        {
@@ -83,29 +104,29 @@ vector<Linha> PARSER::pre_proc(vector<Linha> code)
             i++;
         }
         while(s!=sections::S_TEXT && i<_code.size());
-        bool erased = false;
+        erased = false;
         while(i<_code.size())
         {
             s.clear();
             memgetline(_code[i],s);
 //            cout << s;
 //            cin.get();
-            size_t found = s.find(';');
-            if(found!=string::npos)
+//            size_t found = s.find(';');
+//            if(found!=string::npos)
+//            {
+////                cout << s << endl;
+////                cout << found;
+////                cin.get();
+//                s = s.substr(0,found-1);
+//            }
+//            if(s.find(diretivas::EQU)!=string::npos)
+//            {
+//                _code.erase(_code.begin()+i);
+//                erased = true;
+//            }
+            if(s.find(diretivas::IF)!=string::npos)
             {
-//                cout << s << endl;
-//                cout << found;
-//                cin.get();
-                s = s.substr(0,found-1);
-            }
-            if(s.find(diretivas::EQU)!=string::npos)
-            {
-                _code.erase(_code.begin()+i);
-                erased = true;
-            }
-            else if(s.find(diretivas::IF)!=string::npos)
-            {
-                for(unsigned int j=0;j<_code[i].tokens.size();j++)
+                for(unsigned int j=0; j<_code[i].tokens.size(); j++)
                 {
                     if(diretivas::IF == _code[i].tokens[j])
                     {
