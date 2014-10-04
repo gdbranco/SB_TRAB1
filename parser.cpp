@@ -4,11 +4,11 @@ vector<Linha> PARSER::toMEM(string nome)
     vector<Linha> memoria;
     vector<string> _tokens;
     int _linha=0;
-	fstream sc;
-	char* pch;
-	sc.open(nome.c_str());
-	string s;
-	while(getline(sc,s))
+    fstream sc;
+    char* pch;
+    sc.open(nome.c_str());
+    string s;
+    while(getline(sc,s))
     {
         if(s!="")
         {
@@ -24,67 +24,114 @@ vector<Linha> PARSER::toMEM(string nome)
         memoria.push_back(Linha(_linha,_tokens));
         _tokens.clear();
     }
-	sc.close();
-	return memoria;
+    sc.close();
+    return memoria;
 }
 void PARSER::memgetline(const Linha _code, string &s)
 {
-	for(unsigned int j=0;j<_code.tokens.size();j++)
-	{
-		s.append(_code.tokens[j]);
-		s.append(" ");
-	}
-	s.erase(s.length()-1);
+    for(unsigned int j=0; j<_code.tokens.size(); j++)
+    {
+        s.append(_code.tokens[j]);
+        s.append(" ");
+    }
+    s.erase(s.length()-1);
 }
-void PARSER::pre_proc(vector<Linha> _code)
+vector<Linha> PARSER::pre_proc(vector<Linha> code)
 {
-	bool DATA_FIRST=0;
-	unsigned int i = 0;
-    	vector<pair<string,int> > lista;
-	if(!_code.empty())
-	{
-		string s;
-		do
-		{
-			s.clear();
-			memgetline(_code[i++],s);
-			//i++;
-		}while(s!=sections::S_DATA && i<_code.size());
-		if(_code[i].nlinha>1)
-		{
-			DATA_FIRST=false;
-		}
-		if(DATA_FIRST)
-		{
-			cout << s << endl;
-		}
-		while(i<_code.size())
-		{
-			memgetline(_code[++i], s);
-			if(DATA_FIRST)
-				cout << s << endl;
-			if(s == diretivas::END)
-				break;
-			char *pch = strtok((char*)s.c_str(),"\t ");
-			for(unsigned int j=0;j<_code[i].tokens.size();j++)
-			{
-				string aux(_code[i].tokens[j]);
-				aux = aux.substr(0,aux.length()-1);
-				if(islabel(_code[i].tokens[j]) && _code[i].tokens[j+1] == diretivas::EQU) //!strcmp((pch = strtok(NULL,"\t ")),diretivas::EQU.c_str()))
-				{
-					lista.push_back(make_pair(aux,atoi(_code[i].tokens[j+2].c_str())));
-				}
-				//cout << pch << endl;
-				pch = strtok(NULL,"\t ");
-			}
-		}
-		//cout << s;
-		//s.clear();
-		//do
-		//{
-			
-		//}while();
-	}
+    unsigned int i = 0;
+    vector<pair<string,int> > lista;
+    vector<Linha> _code = code;
+    if(!_code.empty())
+    {
+        string s;
+        do
+        {
+            s.clear();
+            memgetline(_code[i],s);
+            i++;
+        }
+        while(s!=sections::S_DATA && i<_code.size());
+        while(i<_code.size())
+        {
+            s.clear();
+            memgetline(_code[i], s);
+            if(s == diretivas::END)
+                break;
+            for(unsigned int j=0; j<_code[i].tokens.size(); j++)
+            {
+//                if(j+1>_code[i].tokens.size() || j+2>_code[i].tokens.size())
+//                    continue;
+                string aux(_code[i].tokens[j]);
+                aux = aux.substr(0,aux.length()-1);
+                if(islabel(_code[i].tokens[j]) && _code[i].tokens[++j] == diretivas::EQU)
+                {
+                    lista.push_back(make_pair(aux,atoi(_code[i].tokens[++j].c_str())));
+                }
+                //cout << pch << endl;
+            }
+            i++;
+        }
+//		for(unsigned int j=0;j<lista.size();j++)
+//        {
+//            cout << lista[j].first << ' ' << lista[j].second << endl;
+//        }
+        i=0;
+        do
+        {
+            s.clear();
+            memgetline(_code[i],s);
+            i++;
+        }
+        while(s!=sections::S_TEXT && i<_code.size());
+        bool erased = false;
+        while(i<_code.size())
+        {
+            s.clear();
+            memgetline(_code[i],s);
+//            cout << s;
+//            cin.get();
+            size_t found = s.find(';');
+            if(found!=string::npos)
+            {
+//                cout << s << endl;
+//                cout << found;
+//                cin.get();
+                s = s.substr(0,found-1);
+            }
+            if(s.find(diretivas::EQU)!=string::npos)
+            {
+                _code.erase(_code.begin()+i);
+                erased = true;
+            }
+            else if(s.find(diretivas::IF)!=string::npos)
+            {
+                for(unsigned int j=0;j<_code[i].tokens.size();j++)
+                {
+                    if(diretivas::IF == _code[i].tokens[j])
+                    {
+                        j++;
+                        for(unsigned int k=0; k<lista.size(); k++)
+                        {
+                            if((lista[k].first == _code[i].tokens[j]) && !lista[k].second)
+                            {
+                                _code.erase(_code.begin()+i+1);
+                            }
+                        }
+                    }
+                }
+                _code.erase(_code.begin()+i);
+                erased = true;
+            }
+//            cout << i;
+//            cin.get();
+            if(!erased)
+                i++;
+            erased = false;
+        }
+        //cout << s;
+        //s.clear();
+    }
+    return _code;
 }
 void PARSER::pre_proc(string _arquivo)
 {
@@ -124,7 +171,7 @@ void PARSER::pre_proc(string _arquivo)
                 {
                     string aux(pch);
                     aux = aux.substr(0,aux.length()-1);
-                    if(islabel(string(pch)) && !strcmp((pch = strtok(NULL,"\t ")),diretivas::EQU.c_str()))
+                    if(islabel(string(pch)) && string(pch = strtok(NULL,"\t ")) == diretivas::EQU) //!strcmp((pch = strtok(NULL,"\t ")),diretivas::EQU.c_str())
                     {
                         lista.push_back(make_pair(aux,atoi(pch=strtok(NULL,"\t "))));
                     }
@@ -152,7 +199,7 @@ void PARSER::pre_proc(string _arquivo)
 //                cin.get();
                 s = s.substr(0,found-1);
             }
-	    //(s.find(diretivas::EQU)==string::npos) xor
+            //(s.find(diretivas::EQU)==string::npos) xor
             if(((s.find(diretivas::EQU)==string::npos) and (s.find(diretivas::IF)==string::npos)) xor !nextline)
             {
                 cout << s << endl;
@@ -170,7 +217,7 @@ void PARSER::pre_proc(string _arquivo)
                     if(!strcmp(pch,diretivas::IF.c_str()))
                     {
                         pch = strtok(NULL,"\t ");
-                        for(unsigned int i=0;i<lista.size();i++)
+                        for(unsigned int i=0; i<lista.size(); i++)
                         {
                             if((!strcmp(pch,lista[i].first.c_str()) && !lista[i].second)||(!atoi(pch)))
                             {

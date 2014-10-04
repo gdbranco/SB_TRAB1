@@ -42,7 +42,7 @@ public:
     static int iscomment(const string _comment);
     static void pre_proc(const string _arquivo);
     static void pre_proc(const vector<string> _mem);
-    static void pre_proc(const vector<Linha> _code);
+    static vector<Linha> pre_proc(const vector<Linha> _code);
     static void memgetline(const Linha, string& s);
     static vector<Linha> toMEM(const string nome);
 };

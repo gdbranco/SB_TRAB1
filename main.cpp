@@ -26,24 +26,28 @@ int main()
     memoria = PARSER::toMEM("teste.asm");
     //for(unsigned int i=0;i<memoria.size();i++)
     //{
-        //cout << memoria[i] << endl;
+    //cout << memoria[i] << endl;
     //}
-    PARSER::pre_proc(memoria);
-    cout << endl;
+    vector<Linha> memoriaEQU = PARSER::pre_proc(memoria);
+    for(unsigned int i=0; i<memoriaEQU.size(); i++)
+    {
+        cout << memoriaEQU[i] << endl;
+    }
+
     //PARSER::pre_proc("teste.asm");
     /**Teste macro*/
 //    Macro macro("TROCA AQUI","add 1 2\nsub 3 2\n");
 //    cout << macro;
     /**Teste das inst e dir validas*/
-	//Operador teste;
-	//teste.showValidos();
-	//cout<<endl;
+    //Operador teste;
+    //teste.showValidos();
+    //cout<<endl;
     /**Primeiro teste de pre proc !funciona*/
-	//string memoria;
-	//toMEM("teste.asm", memoria);
-	//	cout<<memoria<<endl;
-	//primeira_passagi(memoria);
-	return 0;
+    //string memoria;
+    //toMEM("teste.asm", memoria);
+    //	cout<<memoria<<endl;
+    //primeira_passagi(memoria);
+    return 0;
 }
 //inutil eças funcao
 
