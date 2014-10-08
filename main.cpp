@@ -6,7 +6,6 @@
 #include<fstream>
 /**Testes**/
 #include "parser.h"
-#include "Macro.h"
 using namespace std;
 /*Ignora comentario e ajeita os EQU*/
 
@@ -29,9 +28,20 @@ int main()
     //cout << memoria[i] << endl;
     //}
     vector<Linha> memoriaEQU = PARSER::pre_proc(memoria);
-    for(unsigned int i=0; i<memoriaEQU.size(); i++)
+    if(!memoriaEQU.empty())
     {
-        cout << memoriaEQU[i] << endl;
+        for(unsigned int i=0; i<memoriaEQU.size(); i++)
+        {
+            cout << memoriaEQU[i] << endl;
+        }
+    }
+    if(!PARSER::erros.empty())
+    {
+        cout << "ERROS" << endl;
+        for(unsigned int i=0; i<PARSER::erros.size(); i++)
+        {
+            cout << "Linha : "<<PARSER::erros[i].first << ";" << PARSER::erros[i].second << endl;
+        }
     }
 
     //PARSER::pre_proc("teste.asm");

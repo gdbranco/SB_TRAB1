@@ -1,4 +1,17 @@
 #include "parser.h"
+vector<pair<int,string> > PARSER::erros;
+string PARSER::retiraComentarios(string _linha)
+{
+    size_t found = _linha.find(';');
+    if(found!=string::npos)
+    {
+//                cout << s << endl;
+//                cout << found;
+//                cin.get();
+        _linha = _linha.substr(0,found-1);
+    }
+    return _linha;
+}
 vector<Linha> PARSER::toMEM(string nome)
 {
     vector<Linha> memoria;
@@ -12,14 +25,7 @@ vector<Linha> PARSER::toMEM(string nome)
     {
         if(s!="")
         {
-            size_t found = s.find(';');
-            if(found!=string::npos)
-            {
-//                cout << s << endl;
-//                cout << found;
-//                cin.get();
-                s = s.substr(0,found-1);
-            }
+            s = retiraComentarios(s);
             pch = strtok((char*)s.c_str(),"\t ");
             while(pch!=NULL)
             {
@@ -73,7 +79,11 @@ vector<Linha> PARSER::pre_proc(vector<Linha> code)
 //                s = s.substr(0,found-1);
 //            }
             if(s == diretivas::END)
-                break;
+            {
+			  erros.push_back(make_pair(_code[i].nlinha,"Erro sintatico, END sem uma macro"));
+			  i++;
+			  continue;
+		}
             for(unsigned int j=0; j<_code[i].tokens.size(); j++)
             {
 //                if(j+1>_code[i].tokens.size() || j+2>_code[i].tokens.size())
@@ -153,105 +163,6 @@ vector<Linha> PARSER::pre_proc(vector<Linha> code)
         //s.clear();
     }
     return _code;
-}
-void PARSER::pre_proc(string _arquivo)
-{
-    fstream arq;
-    arq.open(_arquivo.c_str());
-    bool DATA_FIRST=true;
-    int linha = 0;
-    string s;
-    vector<pair<string,int> > lista;
-    char *pch;
-    if(arq)
-    {
-        do
-        {
-            getline(arq,s);
-            linha++;
-        }
-        while(s!=sections::S_DATA);
-        if(linha>1)
-        {
-//            cout << linha;
-//            cin.get();
-            DATA_FIRST = false;
-        }
-        if(DATA_FIRST)
-            cout << s << endl;
-        while(getline(arq,s))
-        {
-            if(DATA_FIRST)
-                cout << s << endl;
-            if(s == diretivas::END)
-                break;
-            if(s != "")
-            {
-                pch = strtok((char*)s.c_str(),"\t ");
-                while(pch!=NULL)
-                {
-                    string aux(pch);
-                    aux = aux.substr(0,aux.length()-1);
-                    if(islabel(string(pch)) && string(pch = strtok(NULL,"\t ")) == diretivas::EQU) //!strcmp((pch = strtok(NULL,"\t ")),diretivas::EQU.c_str())
-                    {
-                        lista.push_back(make_pair(aux,atoi(pch=strtok(NULL,"\t "))));
-                    }
-                    //cout << pch << endl;
-                    pch = strtok(NULL,"\t ");
-                }
-            }
-        }
-        arq.clear();
-        arq.seekg(0,arq.beg);
-        do
-        {
-            getline(arq,s);
-        }
-        while(s!=sections::S_TEXT);
-        cout << s << endl;
-        int nextline = 1;
-        while(getline(arq,s))
-        {
-            size_t found = s.find(';');
-            if((found!=string::npos))
-            {
-//                cout << s << endl;
-//                cout << found;
-//                cin.get();
-                s = s.substr(0,found-1);
-            }
-            //(s.find(diretivas::EQU)==string::npos) xor
-            if(((s.find(diretivas::EQU)==string::npos) and (s.find(diretivas::IF)==string::npos)) xor !nextline)
-            {
-                cout << s << endl;
-            }
-            nextline = 1;
-            if(s == diretivas::END && DATA_FIRST)
-                break;
-            if(s != "")
-            {
-                pch = strtok((char*)s.c_str(),"\t ");
-                while(pch!=NULL)
-                {
-                    string aux(pch);
-                    //cout << pch << endl;
-                    if(!strcmp(pch,diretivas::IF.c_str()))
-                    {
-                        pch = strtok(NULL,"\t ");
-                        for(unsigned int i=0; i<lista.size(); i++)
-                        {
-                            if((!strcmp(pch,lista[i].first.c_str()) && !lista[i].second)||(!atoi(pch)))
-                            {
-                                nextline = 0;
-                            }
-                        }
-                    }
-                    pch = strtok(NULL,"\t ");
-                }
-            }
-        }
-        arq.close();
-    }
 }
 
 int PARSER::islabel(string _label)

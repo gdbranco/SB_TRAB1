@@ -40,10 +40,10 @@ public:
     static int isdir(const string _dir);
     static int isinst(const string _inst);
     static int iscomment(const string _comment);
-    static void pre_proc(const string _arquivo);
-    static void pre_proc(const vector<string> _mem);
     static vector<Linha> pre_proc(const vector<Linha> _code);
     static void memgetline(const Linha, string& s);
     static vector<Linha> toMEM(const string nome);
+    static string retiraComentarios(string _linha);
+    static vector<pair<int,string> > erros;
 };
 #endif // PARSER_H
