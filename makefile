@@ -3,13 +3,13 @@
 all: prog
 
 prog: parser.o defines.o
-	g++ main.cpp parser.o  defines.o -o teste
+	g++ main.cpp -std=c++11 parser.o  defines.o -o teste
 
 defines.o: defines.h
-	g++ -ansi -Wall defines.cpp -c
+	g++ -ansi -Wall defines.cpp -std=c++11 -c
 
 parser.o: parser.h 
-	g++ -ansi -Wall parser.cpp -c
+	g++ -ansi -Wall parser.cpp -std=c++11 -c
 
 clean:
 	rm -f *.o

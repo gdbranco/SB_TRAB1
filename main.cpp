@@ -30,18 +30,18 @@ int main()
     vector<Linha> memoriaEQU = PARSER::pre_proc(memoria);
     if(!memoriaEQU.empty())
     {
-        for(unsigned int i=0; i<memoriaEQU.size(); i++)
-        {
-            cout << memoriaEQU[i] << endl;
-        }
+	  for(unsigned int i=0; i<memoriaEQU.size(); i++)
+	  {
+		cout << memoriaEQU[i] << endl;
+	  }
     }
     if(!PARSER::erros.empty())
     {
-        cout << "ERROS" << endl;
-        for(unsigned int i=0; i<PARSER::erros.size(); i++)
-        {
-            cout << "Linha : "<<PARSER::erros[i].first << ";" << PARSER::erros[i].second << endl;
-        }
+	  cout << "ERROS" << endl;
+	  for(unsigned int i=0; i<PARSER::erros.size(); i++)
+	  {
+		cout << "Linha : "<<PARSER::erros[i].first << ";" << PARSER::erros[i].second << endl;
+	  }
     }
 
     //PARSER::pre_proc("teste.asm");

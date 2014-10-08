@@ -8,6 +8,7 @@
 #include <vector>
 #include <utility>
 #include <algorithm>
+#include <cctype>
 #include "defines.h"
 #include <fstream>
 //TODO:

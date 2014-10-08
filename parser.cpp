@@ -56,6 +56,9 @@ vector<Linha> PARSER::pre_proc(vector<Linha> code)
     vector<pair<string,int> > lista;
     vector<Linha> _code = code;
     bool erased = false;
+    bool dlabel_inline = false;
+    unsigned int c;
+    vector<Linha>::iterator it = code.begin();
     if(!_code.empty())
     {
         string s;
@@ -70,42 +73,71 @@ vector<Linha> PARSER::pre_proc(vector<Linha> code)
         {
             s.clear();
             memgetline(_code[i], s);
-//            size_t found = s.find(';');
-//            if(found!=string::npos)
-//            {
-////                cout << s << endl;
-////                cout << found;
-////                cin.get();
-//                s = s.substr(0,found-1);
-//            }
-            if(s == diretivas::END)
-            {
-			  erros.push_back(make_pair(_code[i].nlinha,"Erro sintatico, END sem uma macro"));
+            //if(s == diretivas::END)
+            //{
+			  //erros.push_back(make_pair(_code[i].nlinha,"Erro sintatico, END sem uma macro"));
+			  //i++;
+			  //erased = false;
+			  //dlabel_inline = false;
+			  //continue;
+		//}
+		//checa se há dupla definicao de label na linha
+		c=0;
+		for(unsigned int j=0; j<_code[i].tokens.size() && c<2 ;j++)
+		{
+			  if(islabel(_code[i].tokens[j]))
+			   {
+				  //cout << _code[i].tokens[j];
+				  //cin.get();
+				    c++;
+			  }
+			  //cout << c;
+		}
+		if(c>1)
+		{
+		    dlabel_inline = true;
+		}
+		if(!dlabel_inline)
+		{
+		//Se a linha estiver correta coloca na lista de EQU a label
+			  for(unsigned int j=0; j<_code[i].tokens.size(); j++)
+			  {
+				string aux(_code[i].tokens[j]);
+				aux = aux.substr(0,aux.length()-1);
+				if(islabel(_code[i].tokens[j]))
+				{
+					  if(_code[i].tokens[j+1] == diretivas::EQU)
+					  {
+						lista.push_back(make_pair(aux,atoi(_code[i].tokens[j+2].c_str())));
+						_code.erase(_code.begin()+i);
+						erased = true;
+					  }
+					  else
+						    continue;
+				}
+				//cout << pch << endl;
+			  }
+		}
+		else
+		{
+			  erros.push_back(make_pair(_code[i].nlinha,"Erro sintatico, redefinicao de label"));
 			  i++;
+			  dlabel_inline = false;
+			  erased = false;
 			  continue;
 		}
-            for(unsigned int j=0; j<_code[i].tokens.size(); j++)
-            {
-//                if(j+1>_code[i].tokens.size() || j+2>_code[i].tokens.size())
-//                    continue;
-                string aux(_code[i].tokens[j]);
-                aux = aux.substr(0,aux.length()-1);
-                if(islabel(_code[i].tokens[j]) && _code[i].tokens[++j] == diretivas::EQU)
-                {
-                    lista.push_back(make_pair(aux,atoi(_code[i].tokens[++j].c_str())));
-                    _code.erase(_code.begin()+i);
-                    erased = true;
-                }
-                //cout << pch << endl;
-            }
             if(!erased)
-                i++;
+		{
+			  i++;
+		}
             erased = false;
+		dlabel_inline = false;
         }
 //		for(unsigned int j=0;j<lista.size();j++)
 //        {
 //            cout << lista[j].first << ' ' << lista[j].second << endl;
 //        }
+//        EQU SECTION TEXT
         i=0;
         do
         {
@@ -119,21 +151,6 @@ vector<Linha> PARSER::pre_proc(vector<Linha> code)
         {
             s.clear();
             memgetline(_code[i],s);
-//            cout << s;
-//            cin.get();
-//            size_t found = s.find(';');
-//            if(found!=string::npos)
-//            {
-////                cout << s << endl;
-////                cout << found;
-////                cin.get();
-//                s = s.substr(0,found-1);
-//            }
-//            if(s.find(diretivas::EQU)!=string::npos)
-//            {
-//                _code.erase(_code.begin()+i);
-//                erased = true;
-//            }
             if(s.find(diretivas::IF)!=string::npos)
             {
                 for(unsigned int j=0; j<_code[i].tokens.size(); j++)
@@ -156,7 +173,9 @@ vector<Linha> PARSER::pre_proc(vector<Linha> code)
 //            cout << i;
 //            cin.get();
             if(!erased)
-                i++;
+		{
+			  i++;
+		}
             erased = false;
         }
         //cout << s;
@@ -170,7 +189,7 @@ int PARSER::islabel(string _label)
     size_t found;
     if((found = _label.find(':')!=string::npos) && _label[found+1] != '\0')
         return OK;
-    return -OK;
+    return !OK;
 }
 
 int PARSER::iscomment(string _comment)
@@ -178,7 +197,7 @@ int PARSER::iscomment(string _comment)
     size_t found;
     if((found = _comment.find(';')!=string::npos))
         return OK;
-    return -OK;
+    return !OK;
 }
 
 int PARSER::isdir(string _dir)
@@ -201,7 +220,7 @@ int PARSER::isdir(string _dir)
         return 1;
     else if(_dir == diretivas::MACRO)
         return 1;
-    return -1;
+    return !OK;
 }
 //retorno = (inst valida) ? inst.opcode : 1
 int PARSER::isinst(string _inst)
@@ -262,5 +281,5 @@ int PARSER::isinst(string _inst)
     {
         return instructions::STOP.second;
     }
-    return -1;
+    return !OK;
 }
