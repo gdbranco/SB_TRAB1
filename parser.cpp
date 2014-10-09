@@ -51,8 +51,73 @@ void PARSER::memgetline(const Linha _code, string &s)
     }
     s.erase(s.length()-1);
 }
-vector<Linha> PARSER::make_listaEQU(vector<Linha>& code)
+vector<Linha> PARSER::run_preproc(vector<Linha> _code)
 {
+	bool erased;
+	vector<Linha> code = _code;
+	vector<Linha>::iterator linha = code.begin();
+	vector<string>::iterator token;
+	vector<Define>::iterator define;
+	if(!code.empty())
+	{
+		while(linha!=code.end())
+		{
+			erased = false;
+			define = defines.begin();
+			while(define!=defines.end())
+			{	
+				//cout << define->label;
+				//cout << define->label.length();
+				//cout << define->label.substr(0,define->label.length()-1);
+				//cin.get();
+				if((find(linha->tokens.begin(),linha->tokens.end(),define->label.substr(0,define->label.length()-1))!=linha->tokens.end()))
+				{
+					token = linha->tokens.begin();
+					while(token != linha->tokens.end())
+					{
+						stringstream ss;
+						ss << define->value;
+						if(*token == define->label.substr(0,define->label.length()-1))
+							*token = ss.str();
+						token++;
+					}
+					if((find(linha->tokens.begin(),linha->tokens.end(),diretivas::IF)!=linha->tokens.end()))
+					{
+						token = linha->tokens.begin();
+						while(token != linha->tokens.end())
+						{
+							if(*token == diretivas::IF)
+							{
+								token++;
+								if(*token == "0")
+								{
+									//cout << *linha;
+									//linha++;
+									//cout << *(linha+1);
+									code.erase(linha+1);
+								}
+								code.erase(linha);
+								erased = true;
+								/**Pensar noutra solucao depois**/
+								break;
+							}
+							token++;
+						}
+					}
+					//cout<< *linha<<endl;
+					//cin.get();
+				}
+				define++;
+			}
+			if(!erased)
+				linha++;
+		}
+	}	
+	return code;
+}
+vector<Linha> PARSER::make_listaEQU(vector<Linha> _code)
+{
+    vector<Linha> code = _code;
     vector<Linha>::iterator linha = code.begin();
     vector<string>::iterator token;
     bool erased;
@@ -104,12 +169,12 @@ vector<Linha> PARSER::make_listaEQU(vector<Linha>& code)
                 linha++;
         }
         /**Mostrando o vetor para testes**/
-//        vector<Define>::iterator it = defines.begin();
-//        while(it!=defines.end())
-//        {
-//            cout << *it<< endl;
-//            it++;
-//        }
+	  //vector<Define>::iterator it = defines.begin();
+	  //while(it!=defines.end())
+	  //{
+		//cout << *it<< endl;
+		//it++;
+	  //}
 
     }
     return code;
@@ -117,7 +182,8 @@ vector<Linha> PARSER::make_listaEQU(vector<Linha>& code)
 vector<Linha> PARSER::pre_proc(vector<Linha> code)
 {
     PARSER p;
-    p.make_listaEQU(code);
+    code = p.make_listaEQU(code);
+    code = p.run_preproc(code);
 //    unsigned int i = 0;
 //    vector<pair<string,int> > lista;
 //    vector<Linha> _code = code;

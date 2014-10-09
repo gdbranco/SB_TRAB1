@@ -11,6 +11,7 @@
 #include <cctype>
 #include "defines.h"
 #include <fstream>
+#include <sstream>
 //TODO:
 using namespace std;
 typedef struct _linha
@@ -53,7 +54,8 @@ class PARSER
 {
 private:
     vector<Define> defines;
-    vector<Linha> make_listaEQU(vector<Linha>& code);
+    vector<Linha> make_listaEQU(vector<Linha> _code);
+    vector<Linha> run_preproc(vector<Linha> _code);
 public:
     static int islabel(const string _label);
     static int isdir(const string _dir);
