@@ -5,8 +5,9 @@
 using namespace std;
 namespace sections
 {
-    extern string S_TEXT;
-    extern string S_DATA;
+    extern string S;
+    extern string TEXT;
+    extern string DATA;
 }
 namespace instructions
 {

@@ -1,8 +1,9 @@
 #include "defines.h"
 namespace sections
 {
-    string S_TEXT = "SECTION TEXT";
-    string S_DATA = "SECTION DATA";
+    string S = "SECTION";
+    string TEXT = "TEXT";
+    string DATA = "DATA";
 }
 namespace instructions
 {

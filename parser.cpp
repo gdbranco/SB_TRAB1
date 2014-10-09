@@ -43,6 +43,7 @@ vector<Linha> PARSER::toMEM(string nome)
 }
 void PARSER::memgetline(const Linha _code, string &s)
 {
+    s.clear();
     for(unsigned int j=0; j<_code.tokens.size(); j++)
     {
         s.append(_code.tokens[j]);
@@ -50,138 +51,202 @@ void PARSER::memgetline(const Linha _code, string &s)
     }
     s.erase(s.length()-1);
 }
-vector<Linha> PARSER::pre_proc(vector<Linha> code)
+vector<Linha> PARSER::make_listaEQU(vector<Linha>& code)
 {
-    unsigned int i = 0;
-    vector<pair<string,int> > lista;
-    vector<Linha> _code = code;
-    bool erased = false;
-    bool dlabel_inline = false;
-    unsigned int c;
-    vector<Linha>::iterator it = code.begin();
-    if(!_code.empty())
+    vector<Linha>::iterator linha = code.begin();
+    vector<string>::iterator token;
+    bool erased;
+    string s;
+    if(!code.empty())
     {
-        string s;
-        do
+        while(linha!=code.end())
         {
-            s.clear();
-            memgetline(_code[i],s);
-            i++;
-        }
-        while(s!=sections::S_DATA && i<_code.size());
-        while(i<_code.size())
-        {
-            s.clear();
-            memgetline(_code[i], s);
-            //if(s == diretivas::END)
-            //{
-			  //erros.push_back(make_pair(_code[i].nlinha,"Erro sintatico, END sem uma macro"));
-			  //i++;
-			  //erased = false;
-			  //dlabel_inline = false;
-			  //continue;
-		//}
-		//checa se há dupla definicao de label na linha
-		c=0;
-		for(unsigned int j=0; j<_code[i].tokens.size() && c<2 ;j++)
-		{
-			  if(islabel(_code[i].tokens[j]))
-			   {
-				  //cout << _code[i].tokens[j];
-				  //cin.get();
-				    c++;
-			  }
-			  //cout << c;
-		}
-		if(c>1)
-		{
-		    dlabel_inline = true;
-		}
-		if(!dlabel_inline)
-		{
-		//Se a linha estiver correta coloca na lista de EQU a label
-			  for(unsigned int j=0; j<_code[i].tokens.size(); j++)
-			  {
-				string aux(_code[i].tokens[j]);
-				aux = aux.substr(0,aux.length()-1);
-				if(islabel(_code[i].tokens[j]))
-				{
-					  if(_code[i].tokens[j+1] == diretivas::EQU)
-					  {
-						lista.push_back(make_pair(aux,atoi(_code[i].tokens[j+2].c_str())));
-						_code.erase(_code.begin()+i);
-						erased = true;
-					  }
-					  else
-						    continue;
-				}
-				//cout << pch << endl;
-			  }
-		}
-		else
-		{
-			  erros.push_back(make_pair(_code[i].nlinha,"Erro sintatico, redefinicao de label"));
-			  i++;
-			  dlabel_inline = false;
-			  erased = false;
-			  continue;
-		}
-            if(!erased)
-		{
-			  i++;
-		}
-            erased = false;
-		dlabel_inline = false;
-        }
-//		for(unsigned int j=0;j<lista.size();j++)
-//        {
-//            cout << lista[j].first << ' ' << lista[j].second << endl;
-//        }
-//        EQU SECTION TEXT
-        i=0;
-        do
-        {
-            s.clear();
-            memgetline(_code[i],s);
-            i++;
-        }
-        while(s!=sections::S_TEXT && i<_code.size());
-        erased = false;
-        while(i<_code.size())
-        {
-            s.clear();
-            memgetline(_code[i],s);
-            if(s.find(diretivas::IF)!=string::npos)
+            if((find(linha->tokens.begin(),linha->tokens.end(),sections::S) != linha->tokens.end()) \
+                    && \
+                    (find(linha->tokens.begin(),linha->tokens.end(),sections::DATA) != linha->tokens.end()))
             {
-                for(unsigned int j=0; j<_code[i].tokens.size(); j++)
+                linha++;
+                break; // Sai do loop com o linhaerador no local correto SECTION DATA
+            }
+            linha++;
+        }
+        while(linha!=code.end())
+        {
+            erased = false;
+            token = linha->tokens.begin();
+            while(token!=linha->tokens.end())
+            {
+                if(token->find(':')!=string::npos)
                 {
-                    if(diretivas::IF == _code[i].tokens[j])
+                    string label = *token;
+                    token++;
+//                    cout << label << endl;
+                    if(token->find(diretivas::EQU)!=string::npos)
                     {
-                        j++;
-                        for(unsigned int k=0; k<lista.size(); k++)
-                        {
-                            if((lista[k].first == _code[i].tokens[j]) && !lista[k].second)
-                            {
-                                _code.erase(_code.begin()+i+1);
-                            }
-                        }
+                        token++;
+                        int value = atoi(token->c_str());
+//                        cout << value;
+                        defines.push_back(Define(label,value));
+                        code.erase(linha);
+                        erased = true;
+                        break;
                     }
                 }
-                _code.erase(_code.begin()+i);
-                erased = true;
+                token++;
             }
-//            cout << i;
-//            cin.get();
+//            unsigned int i=0;
+//            while(i<linha->tokens.size())
+//            {
+//                cout << linha->tokens[i];
+//                i++;
+//            }
             if(!erased)
-		{
-			  i++;
-		}
-            erased = false;
+                linha++;
         }
-        //cout << s;
-        //s.clear();
+        /**Mostrando o vetor para testes**/
+//        vector<Define>::iterator it = defines.begin();
+//        while(it!=defines.end())
+//        {
+//            cout << *it<< endl;
+//            it++;
+//        }
+
     }
-    return _code;
+    return code;
+}
+vector<Linha> PARSER::pre_proc(vector<Linha> code)
+{
+    PARSER p;
+    p.make_listaEQU(code);
+//    unsigned int i = 0;
+//    vector<pair<string,int> > lista;
+//    vector<Linha> _code = code;
+//    bool erased = false;
+//    bool dlabel_inline = false;
+//    unsigned int c;
+//    if(!_code.empty())
+//    {
+//        string s;
+//        do
+//        {
+//            s.clear();
+//            memgetline(_code[i],s);
+//            i++;
+//        }
+//        while(s!=sections::S_DATA && i<_code.size());
+//        while(i<_code.size())
+//        {
+//            s.clear();
+//            memgetline(_code[i], s);
+//            //if(s == diretivas::END)
+//            //{
+//            //erros.push_back(make_pair(_code[i].nlinha,"Erro sintatico, END sem uma macro"));
+//            //i++;
+//            //erased = false;
+//            //dlabel_inline = false;
+//            //continue;
+//            //}
+//            //checa se há dupla definicao de label na linha
+//            c=0;
+//            for(unsigned int j=0; j<_code[i].tokens.size() && c<2 ; j++)
+//            {
+//                if(islabel(_code[i].tokens[j]))
+//                {
+//                    //cout << _code[i].tokens[j];
+//                    //cin.get();
+//                    c++;
+//                }
+//                //cout << c;
+//            }
+//            if(c>1)
+//            {
+//                dlabel_inline = true;
+//            }
+//            if(!dlabel_inline)
+//            {
+//                //Se a linha estiver correta coloca na lista de EQU a label
+//                for(unsigned int j=0; j<_code[i].tokens.size(); j++)
+//                {
+//                    string aux(_code[i].tokens[j]);
+//                    aux = aux.substr(0,aux.length()-1);
+//                    if(islabel(_code[i].tokens[j]))
+//                    {
+//                        if(_code[i].tokens[j+1] == diretivas::EQU)
+//                        {
+//                            lista.push_back(make_pair(aux,atoi(_code[i].tokens[j+2].c_str())));
+//                            _code.erase(_code.begin()+i);
+//                            erased = true;
+//                        }
+//                        else
+//                            continue;
+//                    }
+//                    //cout << pch << endl;
+//                }
+//            }
+//            else
+//            {
+//                erros.push_back(make_pair(_code[i].nlinha,"Erro sintatico, redefinicao de label"));
+//                i++;
+//                dlabel_inline = false;
+//                erased = false;
+//                continue;
+//            }
+//            if(!erased)
+//            {
+//                i++;
+//            }
+//            erased = false;
+//            dlabel_inline = false;
+//        }
+////		for(unsigned int j=0;j<lista.size();j++)
+////        {
+////            cout << lista[j].first << ' ' << lista[j].second << endl;
+////        }
+////        EQU SECTION TEXT
+//        i=0;
+//        do
+//        {
+//            s.clear();
+//            memgetline(_code[i],s);
+//            i++;
+//        }
+//        while(s!=sections::S_TEXT && i<_code.size());
+//        erased = false;
+//        while(i<_code.size())
+//        {
+//            s.clear();
+//            memgetline(_code[i],s);
+//            if(s.find(diretivas::IF)!=string::npos)
+//            {
+//                for(unsigned int j=0; j<_code[i].tokens.size(); j++)
+//                {
+//                    if(diretivas::IF == _code[i].tokens[j])
+//                    {
+//                        j++;
+//                        for(unsigned int k=0; k<lista.size(); k++)
+//                        {
+//                            if((lista[k].first == _code[i].tokens[j]) && !lista[k].second)
+//                            {
+//                                _code.erase(_code.begin()+i+1);
+//                            }
+//                        }
+//                    }
+//                }
+//                _code.erase(_code.begin()+i);
+//                erased = true;
+//            }
+////            cout << i;
+////            cin.get();
+//            if(!erased)
+//            {
+//                i++;
+//            }
+//            erased = false;
+//        }
+//        //cout << s;
+//        //s.clear();
+//    }
+    return code;
 }
 
 int PARSER::islabel(string _label)

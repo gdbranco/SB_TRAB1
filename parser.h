@@ -33,9 +33,27 @@ typedef struct _linha
         return os;
     }
 } Linha;
+typedef struct _define
+{
+    int value;
+    string label;
+    _define(){}
+    _define(string _label,int _value)
+    {
+        this->label = _label;
+        this->value = _value;
+    }
+    friend ostream& operator<<(ostream& os, const _define& it)
+    {
+        os << it.label << ' ' << it.value;
+        return os;
+    }
+}Define;
 class PARSER
 {
 private:
+    vector<Define> defines;
+    vector<Linha> make_listaEQU(vector<Linha>& code);
 public:
     static int islabel(const string _label);
     static int isdir(const string _dir);
