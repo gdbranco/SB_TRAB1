@@ -8,7 +8,6 @@
 *.lib
 *.class
 *.dll
-
 #Comprimidos#
 #############
 *.7z
