@@ -13,4 +13,4 @@ parser.o: parser.h
 
 clean:
 	rm -f *.o
-	rm -f teste
+	rm -f *.out
