@@ -7,9 +7,6 @@
 /**Testes**/
 #include "parser.h"
 using namespace std;
-/*Ignora comentario e ajeita os EQU*/
-
-
 int main()
 {
     /**Teste do parser**/

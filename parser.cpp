@@ -5,10 +5,17 @@ string PARSER::retiraComentarios(string _linha)
     size_t found = _linha.find(';');
     if(found!=string::npos)
     {
-//                cout << s << endl;
-//                cout << found;
-//                cin.get();
-        _linha = _linha.substr(0,found-1);
+//        cout << _linha << endl;
+//        cout << found;
+//        cin.get();
+        if(found == 0)
+        {
+            _linha = "";
+        }
+        else
+        {
+            _linha = _linha.substr(0,found-1);
+        }
     }
     return _linha;
 }
@@ -23,9 +30,10 @@ vector<Linha> PARSER::toMEM(string nome)
     string s;
     while(getline(sc,s))
     {
+        _linha++;
+        s = retiraComentarios(s);
         if(s!="")
         {
-            s = retiraComentarios(s);
             pch = strtok((char*)s.c_str(),"\t ");
             while(pch!=NULL)
             {
@@ -33,9 +41,8 @@ vector<Linha> PARSER::toMEM(string nome)
 //                cout << pch << endl;
                 pch = strtok(NULL,"\t ");
             }
+            memoria.push_back(Linha(_linha,_tokens));
         }
-        _linha++;
-        memoria.push_back(Linha(_linha,_tokens));
         _tokens.clear();
     }
     sc.close();
