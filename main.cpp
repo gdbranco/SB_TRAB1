@@ -1,13 +1,11 @@
 #include<iostream>
 #include<string>
-#include<cstring>
 #include<vector>
-#include<sstream>
 #include<fstream>
 /**Testes**/
 #include "parser.h"
 using namespace std;
-int main()
+int main(int argc,char **argv)
 {
     /**Teste do parser**/
 //    cout << PARSER::islabel("L1:") << endl;
@@ -19,41 +17,61 @@ int main()
 //    cout << PARSER::iscomment(";comment") << endl;
 //    cout << PARSER::iscomment("!comment") << endl;
     vector<Linha> memoria;
-    memoria = PARSER::toMEM("teste_erro.asm");
+    string nome_base(argv[1]);
+    string run_type(argv[2]);
+    string nome_arq = nome_base+".asm";
+    memoria = PARSER::toMEM(nome_arq);
     //for(unsigned int i=0;i<memoria.size();i++)
     //{
     //cout << memoria[i] << endl;
     //}
-    vector<Linha> memoriaEQU = PARSER::pre_proc(memoria);
-    if(!memoriaEQU.empty())
+    /**Se -p roda EQU**/
+    if(run_type==run_type::PRE_PROCESS_EQU)
     {
-	  for(unsigned int i=0; i<memoriaEQU.size(); i++)
-	  {
-		cout << memoriaEQU[i] << endl;
-	  }
+        PARSER::erros_list.clear();
+        nome_arq.clear();
+        nome_arq = nome_base+".pre";
+        vector<Linha> memoriaEQU = PARSER::pre_proc(memoria);
+        /**Se nao houver erros e a memoria nao for vazia abre o arquivo .pre**/
+        if(!memoriaEQU.empty() && PARSER::erros_list.empty())
+        {
+            ofstream myarq;
+            myarq.open(nome_arq.c_str());
+            for(unsigned int i=0; i<memoriaEQU.size(); i++)
+            {
+                //cout << memoriaEQU[i].nlinha << ' ';
+                myarq << memoriaEQU[i];
+                //cout << memoriaEQU[i];
+                if(i!=memoriaEQU.size()-1)
+                {
+                    myarq << endl;
+                    //cout << endl;
+                }
+            }
+            myarq.close();
+        }
+        /**Se houver erros nao abre o arquivo e mostra os erros na tela**/
+        else
+        {
+            cout << "---ERROS---" << endl;
+            for(unsigned int i=0; i<PARSER::erros_list.size(); i++)
+            {
+                cout << PARSER::erros_list[i] << endl;
+            }
+        }
     }
-    if(!PARSER::erros_list.empty())
+    else if(run_type==run_type::PRE_PROCESS_MACRO)
     {
-	  cout << "\n---ERROS---" << endl;
-	  for(unsigned int i=0; i<PARSER::erros_list.size(); i++)
-	  {
-		cout << PARSER::erros_list[i] << endl;
-	  }
-    }
 
-    //PARSER::pre_proc("teste.asm");
-    /**Teste macro*/
-//    Macro macro("TROCA AQUI","add 1 2\nsub 3 2\n");
-//    cout << macro;
-    /**Teste das inst e dir validas*/
-    //Operador teste;
-    //teste.showValidos();
-    //cout<<endl;
-    /**Primeiro teste de pre proc !funciona*/
-    //string memoria;
-    //toMEM("teste.asm", memoria);
-    //	cout<<memoria<<endl;
-    //primeira_passagi(memoria);
+    }
+    else if(run_type==run_type::COMPILE)
+    {
+
+    }
+    else
+    {
+        cout << "Run type nao definido" << endl;
+    }
     return 0;
 }
 //inutil eças funcao

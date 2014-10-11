@@ -1,4 +1,10 @@
 #include "defines.h"
+namespace run_type
+{
+    string PRE_PROCESS_EQU = "-p";
+    string PRE_PROCESS_MACRO = "-m";
+    string COMPILE = "-o";
+}
 namespace erros
 {
     string SINTATICO = "ERRO SINTATICO";

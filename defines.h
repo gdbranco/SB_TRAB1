@@ -15,16 +15,15 @@ typedef struct _linha
         this-> nlinha = _nlinha;
         this-> tokens = _tokens;
     }
-    _linha(int error_type)
-    {
-
-    }
     friend ostream& operator<<(ostream& os, const _linha& it)
     {
-        os << it.nlinha << ' ';
         for(unsigned int i =0; i<it.tokens.size(); i++)
         {
-            cout << it.tokens[i] << ' ';
+            os << it.tokens[i];
+            if(i!=it.tokens.size()-1)
+            {
+                os << ' ';
+            }
         }
         return os;
     }
@@ -67,6 +66,12 @@ typedef struct _erro
         return os;
     }
 }Erro;
+namespace run_type
+{
+    extern string PRE_PROCESS_EQU;
+    extern string PRE_PROCESS_MACRO;
+    extern string COMPILE;
+}
 namespace erros
 {
     extern string SINTATICO;
