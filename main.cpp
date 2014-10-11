@@ -19,7 +19,7 @@ int main()
 //    cout << PARSER::iscomment(";comment") << endl;
 //    cout << PARSER::iscomment("!comment") << endl;
     vector<Linha> memoria;
-    memoria = PARSER::toMEM("teste.asm");
+    memoria = PARSER::toMEM("teste_erro.asm");
     //for(unsigned int i=0;i<memoria.size();i++)
     //{
     //cout << memoria[i] << endl;
@@ -34,7 +34,7 @@ int main()
     }
     if(!PARSER::erros_list.empty())
     {
-	  cout << "ERROS" << endl;
+	  cout << "\n---ERROS---" << endl;
 	  for(unsigned int i=0; i<PARSER::erros_list.size(); i++)
 	  {
 		cout << PARSER::erros_list[i] << endl;
