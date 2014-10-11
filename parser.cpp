@@ -60,7 +60,8 @@ void PARSER::memgetline(const Linha _code, string &s)
 }
 vector<Linha> PARSER::run_preproc(vector<Linha> _code)
 {
-    bool erased;
+    bool erase_currentline;
+    bool erase_nextline;
     vector<Linha> code = _code;
     vector<Linha>::iterator linha = code.begin();
     vector<string>::iterator token;
@@ -69,7 +70,8 @@ vector<Linha> PARSER::run_preproc(vector<Linha> _code)
     {
         while(linha!=code.end())
         {
-            erased = false;
+            erase_currentline = false;
+            erase_nextline    = false;
             define = defines_list.begin();
             while(define!=defines_list.end())
             {
@@ -96,22 +98,25 @@ vector<Linha> PARSER::run_preproc(vector<Linha> _code)
                         token = linha->tokens.begin();
                         while(token != linha->tokens.end())
                         {
+                            cout << *token;
+                            cin.get();
                             if(*token == diretivas::IF)
                             {
-                                token++;
-                                if(*token == "0")
-                                {
-                                    //cout << *linha;
-                                    //linha++;
-                                    //cout << *(linha+1);
-                                    code.erase(linha+1);
-                                }
-                                code.erase(linha);
-                                erased = true;
-                                /**Pensar noutra solucao depois**/
-                                break;
+                                erase_currentline = true;
+                            }
+                            else if(*token == "0")
+                            {
+                                erase_nextline = true;
                             }
                             token++;
+                        }
+                        if(erase_nextline)
+                        {
+                            code.erase(linha+1);
+                        }
+                        if(erase_currentline)
+                        {
+                            code.erase(linha);
                         }
                     }
                     //cout<< *linha<<endl;
@@ -119,7 +124,7 @@ vector<Linha> PARSER::run_preproc(vector<Linha> _code)
                 }
                 define++;
             }
-            if(!erased)
+            if(!erase_currentline)
                 linha++;
         }
     }
