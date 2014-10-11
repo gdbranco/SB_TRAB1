@@ -35,14 +35,14 @@ int main()
 		cout << memoriaEQU[i] << endl;
 	  }
     }
-//    if(!PARSER::erros.empty())
-//    {
-//	  cout << "ERROS" << endl;
-//	  for(unsigned int i=0; i<PARSER::erros.size(); i++)
-//	  {
-//		cout << "Linha : "<<PARSER::erros[i].first << ";" << PARSER::erros[i].second << endl;
-//	  }
-//    }
+    if(!PARSER::erros.empty())
+    {
+	  cout << "ERROS" << endl;
+	  for(unsigned int i=0; i<PARSER::erros.size(); i++)
+	  {
+		cout << "erro : linha "<<PARSER::erros[i].first << ", devido a " << PARSER::erros[i].second << endl;
+	  }
+    }
 
     //PARSER::pre_proc("teste.asm");
     /**Teste macro*/

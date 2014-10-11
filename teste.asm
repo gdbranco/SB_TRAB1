@@ -8,5 +8,6 @@ INPUT VOCE ;faz esta operacao se L2 for verdadeiro
 STOP
 SECTION DATA
 L1: EQU 1
+L1: EQU 0
 L2: EQU 0
 N: SPACE

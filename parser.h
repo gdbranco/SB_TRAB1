@@ -44,6 +44,10 @@ typedef struct _define
         this->label = _label;
         this->value = _value;
     }
+    friend bool operator==(_define& define1, _define& define2)
+    {
+        return (define1.label == define2.label);
+    }
     friend ostream& operator<<(ostream& os, const _define& it)
     {
         os << it.label << ' ' << it.value;
@@ -56,6 +60,7 @@ private:
     vector<Define> defines;
     vector<Linha> make_listaEQU(vector<Linha> _code);
     vector<Linha> run_preproc(vector<Linha> _code);
+    int define_exists(Define procura);
 public:
     static int islabel(const string _label);
     static int isdir(const string _dir);
