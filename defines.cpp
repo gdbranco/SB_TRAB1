@@ -7,12 +7,7 @@ namespace erros
     string label_redefinida = "Redefinicao de label";
     string label_dupla      = "Duas labels na mesma linha";
     string EQU_nlabeled     = "EQU sem label";
-}
-namespace sections
-{
-    string S = "SECTION";
-    string TEXT = "TEXT";
-    string DATA = "DATA";
+    string EQU_ndefinida  = "EQU nao definido";
 }
 namespace instructions
 {

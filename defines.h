@@ -75,6 +75,7 @@ namespace erros
     extern string label_redefinida;
     extern string label_dupla;
     extern string EQU_nlabeled;
+    extern string EQU_ndefinida;
 }
 namespace sections
 {

@@ -62,6 +62,8 @@ vector<Linha> PARSER::run_preproc(vector<Linha> _code)
 {
     bool erase_currentline;
     bool erase_nextline;
+    bool erro;
+    bool achei;
     vector<Linha> code = _code;
     vector<Linha>::iterator linha = code.begin();
     vector<string>::iterator token;
@@ -72,58 +74,99 @@ vector<Linha> PARSER::run_preproc(vector<Linha> _code)
         {
             erase_currentline = false;
             erase_nextline    = false;
-            define = defines_list.begin();
-            while(define!=defines_list.end())
+            //cout << define->label;
+            //cout << define->label.length();
+            //cout << define->label.substr(0,define->label.length()-1);
+            //cin.get();
+            /**Procura um label definido na linha**/
+//            token = linha->tokens.begin();
+//                /**Substitui os labels definidos na linha por seu valor EQU**/
+//                while(token != linha->tokens.end())
+//                {
+//                    define = defines_list.begin();
+//                    while(define!=defines_list.end())
+//                    {
+//                        stringstream ss;
+//                        ss << define->value;
+//                        if(*token == define->label.substr(0,define->label.length()-1))
+//                            *token = ss.str();
+//                        define++;
+//                    }
+//                    token++;
+//                }
+            /**Checa se a linha eh um IF e se a proxima é valida**/
+            if((find(linha->tokens.begin(),linha->tokens.end(),diretivas::IF)!=linha->tokens.end()))
             {
-                //cout << define->label;
-                //cout << define->label.length();
-                //cout << define->label.substr(0,define->label.length()-1);
-                //cin.get();
-                /**Procura um label definido na linha**/
-                if((find(linha->tokens.begin(),linha->tokens.end(),define->label.substr(0,define->label.length()-1))!=linha->tokens.end()))
+//                cout << *linha;
+//                cin.get();
+                token = linha->tokens.begin();
+                /**Substitui os labels definidos na linha do IF por seu valor EQU**/
+                while(token != linha->tokens.end())
                 {
-                    token = linha->tokens.begin();
-                    /**Substitui os labels definidos na linha por seu valor EQU**/
-                    while(token != linha->tokens.end())
+                    achei = false;
+                    define = defines_list.begin();
+                    while(define!=defines_list.end() && !achei)
                     {
+                        erro=false;
+//                        cout <<"label : " << define->label;
+//                        cin.get();
                         stringstream ss;
                         ss << define->value;
                         if(*token == define->label.substr(0,define->label.length()-1))
+                        {
+//                            cout <<"pre-troca : " << *token;
+//                            cin.get();
                             *token = ss.str();
-                        token++;
-                    }
-                    /**Checa se a linha eh um IF e se a proxima é valida**/
-                    if((find(linha->tokens.begin(),linha->tokens.end(),diretivas::IF)!=linha->tokens.end()))
-                    {
-                        token = linha->tokens.begin();
-                        while(token != linha->tokens.end())
+//                            cout <<"pos-troca : " <<*token;
+//                            cin.get();
+                            achei = true;
+                        }
+                        /**Se a linha nao for um EQU definido e nao for uma diretiva a definicao nao existe**/
+                        else
                         {
-                            cout << *token;
-                            cin.get();
-                            if(*token == diretivas::IF)
+                            if(!isdir(*token))
                             {
-                                erase_currentline = true;
+//                                cout << "token nao eh dir nem definido : " << *token;
+//                                cin.get();
+                                erro = true;
                             }
-                            else if(*token == "0")
-                            {
-                                erase_nextline = true;
-                            }
-                            token++;
                         }
-                        if(erase_nextline)
-                        {
-                            code.erase(linha+1);
-                        }
-                        if(erase_currentline)
-                        {
-                            code.erase(linha);
-                        }
+                        define++;
                     }
-                    //cout<< *linha<<endl;
-                    //cin.get();
+                    token++;
                 }
-                define++;
+                /**Se houver erro o coloca na lista**/
+                if(erro)
+                {
+                    erros_list.push_back(Erro(linha->nlinha,erros::SEMANTICO,erros::EQU_ndefinida));
+                }
+                token = linha->tokens.begin();
+                /**Se nao houver linhas faz a avaliacao do IF**/
+                while(token != linha->tokens.end() && !erro)
+                {
+//                    cout << *token;
+//                    cin.get();
+                    if(*token == diretivas::IF)
+                    {
+                        erase_currentline = true;
+                    }
+                    else if(*token == "0")
+                    {
+                        erase_nextline = true;
+                    }
+                    token++;
+                }
+                if(erase_nextline)
+                {
+                    code.erase(linha+1);
+                }
+                if(erase_currentline)
+                {
+                    code.erase(linha);
+                }
             }
+            //cout<< *linha<<endl;
+            //cin.get();
             if(!erase_currentline)
                 linha++;
         }
@@ -147,9 +190,9 @@ vector<Linha> PARSER::make_listaEQU(vector<Linha> _code)
         //Procura SECTION DATA
         while(linha!=code.end())
         {
-            if((find(linha->tokens.begin(),linha->tokens.end(),sections::S) != linha->tokens.end()) \
+            if((find(linha->tokens.begin(),linha->tokens.end(),diretivas::SECTION) != linha->tokens.end()) \
                     && \
-                    (find(linha->tokens.begin(),linha->tokens.end(),sections::DATA) != linha->tokens.end()))
+                    (find(linha->tokens.begin(),linha->tokens.end(),diretivas::DATA) != linha->tokens.end()))
             {
                 linha++;
                 break; // Sai do loop com a linha no local correto SECTION DATA
