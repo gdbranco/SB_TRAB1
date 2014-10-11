@@ -132,7 +132,7 @@ vector<Linha> PARSER::make_listaEQU(vector<Linha> _code)
         {
             if((find(linha->tokens.begin(),linha->tokens.end(),sections::S) != linha->tokens.end()) \
                     && \
-                    (find(linha->tokens.begin(),linha->tokens.end(),sections::DATA) != linha->tokens.end()))
+               (find(linha->tokens.begin(),linha->tokens.end(),sections::DATA) != linha->tokens.end()))
             {
                 linha++;
                 break; // Sai do loop com a linha no local correto SECTION DATA
@@ -170,6 +170,16 @@ vector<Linha> PARSER::make_listaEQU(vector<Linha> _code)
                         }
                         break;
                     }
+                    else if(token->find(':')!=string::npos)
+                    {
+                        erros.push_back(make_pair(linha->nlinha,"Erro sintatico, duas labels na mesma linha"));
+                        break;
+                    }
+                }
+                else if(token->find(diretivas::EQU)!=string::npos)
+                {
+                    erros.push_back(make_pair(linha->nlinha,"Erro sintatico, EQU sem label"));
+                    break;
                 }
                 token++;
             }
