@@ -1,4 +1,13 @@
 #include "defines.h"
+namespace erros
+{
+    string SINTATICO = "ERRO SINTATICO";
+    string SEMANTICO = "ERRO SEMANTICO";
+    string LEXICO    = "ERRO LEXICO";
+    string label_redefinida = "Redefinicao de label";
+    string label_dupla      = "Duas labels na mesma linha";
+    string EQU_nlabeled     = "EQU sem label";
+}
 namespace sections
 {
     string S = "SECTION";

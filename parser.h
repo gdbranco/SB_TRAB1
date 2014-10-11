@@ -14,54 +14,16 @@
 #include <sstream>
 //TODO:
 using namespace std;
-typedef struct _linha
-{
-    int nlinha;
-    vector<string> tokens;
-    _linha() {}
-    _linha(int _nlinha, vector<string> _tokens)
-    {
-        this-> nlinha = _nlinha;
-        this-> tokens = _tokens;
-    }
-    friend ostream& operator<<(ostream& os, const _linha& it)
-    {
-        os << it.nlinha << ' ';
-        for(unsigned int i =0; i<it.tokens.size(); i++)
-        {
-            cout << it.tokens[i] << ' ';
-        }
-        return os;
-    }
-} Linha;
-typedef struct _define
-{
-    int value;
-    string label;
-    _define(){}
-    _define(string _label,int _value)
-    {
-        this->label = _label;
-        this->value = _value;
-    }
-    friend bool operator==(_define& define1, _define& define2)
-    {
-        return (define1.label == define2.label);
-    }
-    friend ostream& operator<<(ostream& os, const _define& it)
-    {
-        os << it.label << ' ' << it.value;
-        return os;
-    }
-}Define;
 class PARSER
 {
 private:
-    vector<Define> defines;
+    vector<Define> defines_list;
     vector<Linha> make_listaEQU(vector<Linha> _code);
     vector<Linha> run_preproc(vector<Linha> _code);
     int define_exists(Define procura);
 public:
+    static vector<Erro> erros_list;
+    /**Metodos**/
     static int islabel(const string _label);
     static int isdir(const string _dir);
     static int isinst(const string _inst);
@@ -70,6 +32,5 @@ public:
     static void memgetline(const Linha, string& s);
     static vector<Linha> toMEM(const string nome);
     static string retiraComentarios(string _linha);
-    static vector<pair<int,string> > erros;
 };
 #endif // PARSER_H

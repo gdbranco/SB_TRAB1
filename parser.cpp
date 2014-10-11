@@ -1,5 +1,5 @@
 #include "parser.h"
-vector<pair<int,string> > PARSER::erros;
+vector<Erro> PARSER::erros_list;
 string PARSER::retiraComentarios(string _linha)
 {
     size_t found = _linha.find(';');
@@ -70,8 +70,8 @@ vector<Linha> PARSER::run_preproc(vector<Linha> _code)
         while(linha!=code.end())
         {
             erased = false;
-            define = defines.begin();
-            while(define!=defines.end())
+            define = defines_list.begin();
+            while(define!=defines_list.end())
             {
                 //cout << define->label;
                 //cout << define->label.length();
@@ -131,7 +131,12 @@ vector<Linha> PARSER::make_listaEQU(vector<Linha> _code)
     vector<Linha>::iterator linha = code.begin();
     vector<string>::iterator token;
     bool erased;
-    string s;
+    bool labeled;
+    bool EQU;
+    int label_counter;
+    int value;
+    int erro;
+    string label;
     if(!code.empty())
     {
         //Procura SECTION DATA
@@ -139,7 +144,7 @@ vector<Linha> PARSER::make_listaEQU(vector<Linha> _code)
         {
             if((find(linha->tokens.begin(),linha->tokens.end(),sections::S) != linha->tokens.end()) \
                     && \
-               (find(linha->tokens.begin(),linha->tokens.end(),sections::DATA) != linha->tokens.end()))
+                    (find(linha->tokens.begin(),linha->tokens.end(),sections::DATA) != linha->tokens.end()))
             {
                 linha++;
                 break; // Sai do loop com a linha no local correto SECTION DATA
@@ -150,45 +155,76 @@ vector<Linha> PARSER::make_listaEQU(vector<Linha> _code)
         while(linha!=code.end())
         {
             erased = false;
+            labeled = false;
+            EQU = false;
+            erro = 0;
+            label.clear();
+            label_counter=0;
             token = linha->tokens.begin();
             while(token!=linha->tokens.end())
             {
-                if(token->find(':')!=string::npos)
+//                cout << *token;
+//                cin.get();
+                if(islabel(*token))
                 {
-                    string label = *token;
-                    token++;
-//                    cout << label << endl;
-//                    cin.get();
-                    if(token->find(diretivas::EQU)!=string::npos)
+                    label = *token;
+                    labeled = true;
+                    label_counter++;
+                }
+                else if(token->find(diretivas::EQU)!=string::npos)
+                {
+                    EQU = true;
+                }
+                else
+                {
+                    value = atoi(token->c_str());
+                }
+                token++;
+            }
+            /**Apos passar pela linha pode-se tentar montar um define**/
+            if(EQU)
+            {
+                if(labeled)
+                {
+                    if(label_counter<2)
                     {
-                        token++;
-                        int value = atoi(token->c_str());
-//                        cout << value;
                         Define _aux(label,value);
                         if(!define_exists(_aux))
                         {
-                            defines.push_back(_aux);
+                            defines_list.push_back(_aux);
                             code.erase(linha);
                             erased = true;
                         }
                         else
                         {
-                            erros.push_back(make_pair(linha->nlinha,"Erro sintatico, Redefinicao de EQU"));
+                            erro = 1; //Label ja definida
                         }
-                        break;
                     }
-                    else if(token->find(':')!=string::npos)
+                    else
                     {
-                        erros.push_back(make_pair(linha->nlinha,"Erro sintatico, duas labels na mesma linha"));
-                        break;
+                        erro = 2; //Mais de um label na linha
                     }
                 }
-                else if(token->find(diretivas::EQU)!=string::npos)
+                else
                 {
-                    erros.push_back(make_pair(linha->nlinha,"Erro sintatico, EQU sem label"));
-                    break;
+                    erro = 3; //EQU sem label
                 }
-                token++;
+            }
+            /**Adiciona os erros a lista de erros**/
+            switch(erro)
+            {
+            case 1:
+                erros_list.push_back(Erro(linha->nlinha,erros::SINTATICO,erros::label_redefinida));
+                break;
+            case 2:
+                erros_list.push_back(Erro(linha->nlinha,erros::SINTATICO,erros::label_dupla));
+                break;
+            case 3:
+                erros_list.push_back(Erro(linha->nlinha,erros::SINTATICO,erros::EQU_nlabeled));
+                break;
+            default:
+                //Sem erros
+                break;
             }
 //            unsigned int i=0;
 //            while(i<linha->tokens.size())
@@ -200,12 +236,12 @@ vector<Linha> PARSER::make_listaEQU(vector<Linha> _code)
                 linha++;
         }
         /**Mostrando o vetor para testes**/
-        //vector<Define>::iterator it = defines.begin();
-        //while(it!=defines.end())
-        //{
-        //cout << *it<< endl;
-        //it++;
-        //}
+        vector<Define>::iterator it = defines_list.begin();
+//        while(it!=defines_list.end())
+//        {
+//            cout << *it<< endl;
+//            it++;
+//        }
 
     }
     return code;
@@ -221,10 +257,10 @@ vector<Linha> PARSER::pre_proc(vector<Linha> code)
 int PARSER::define_exists(Define procura)
 {
     vector<Define>::iterator define;
-    if(!defines.empty())
+    if(!defines_list.empty())
     {
-        define = defines.begin();
-        while(define!=defines.end())
+        define = defines_list.begin();
+        while(define!=defines_list.end())
         {
             if(*define == procura)
             {
