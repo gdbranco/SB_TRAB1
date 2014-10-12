@@ -5,6 +5,37 @@
 #include <vector>
 #include <iostream>
 using namespace std;
+typedef struct _smb
+{
+    string simb;
+    int value;
+    bool def;
+    vector<int> lista_end;
+    _smb(){}
+    _smb(const string _simb, const int _value,const bool _def,const vector<int> _lista_end)
+    {
+        this->simb = _simb;
+        this->value = _value;
+        this->def   = _def;
+        this->lista_end = _lista_end;
+    }
+    friend ostream& operator<<(ostream& os,const _smb& it)
+    {
+        os << it.simb << ' ';
+        os << it.value << ' ';
+        os << it.def   << ' ';
+        for(unsigned int i=0;i<it.lista_end.size();i++)
+        {
+            os << it.lista_end[i];
+            if(i!=it.lista_end.size())
+            {
+                os << ' ';
+            }
+        }
+        return os;
+    }
+}smb_t;
+typedef vector<smb_t> tsmb_t;
 typedef struct _linha
 {
     int nlinha;
@@ -27,7 +58,8 @@ typedef struct _linha
         }
         return os;
     }
-} Linha;
+} linha_t;
+typedef vector<linha_t> code_t;
 typedef struct _define
 {
     int value;
@@ -47,7 +79,7 @@ typedef struct _define
         os << it.label << ' ' << it.value;
         return os;
     }
-}Define;
+}define_t;
 typedef struct _erro
 {
     int nlinha;
@@ -65,7 +97,7 @@ typedef struct _erro
         os << "erro : linha "<<it.nlinha << ", devido a " << it.type << ", pois " << it.reason;
         return os;
     }
-}Erro;
+}erro_t;
 namespace run_type
 {
     extern string PRE_PROCESS_EQU;

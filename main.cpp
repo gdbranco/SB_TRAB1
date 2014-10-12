@@ -16,7 +16,7 @@ int main(int argc,char **argv)
 //    cout << PARSER::isinst("!ADD") << endl;
 //    cout << PARSER::iscomment(";comment") << endl;
 //    cout << PARSER::iscomment("!comment") << endl;
-    vector<Linha> memoria;
+    code_t memoria;
     string nome_base(argv[1]);
     string run_type(argv[2]);
     string nome_arq = nome_base+".asm";
@@ -31,7 +31,7 @@ int main(int argc,char **argv)
         PARSER::erros_list.clear();
         nome_arq.clear();
         nome_arq = nome_base+".pre";
-        vector<Linha> memoriaEQU = PARSER::pre_proc(memoria);
+        code_t memoriaEQU = PARSER::run_preproc(memoria);
         /**Se nao houver erros e a memoria nao for vazia abre o arquivo .pre**/
         if(!memoriaEQU.empty() && PARSER::erros_list.empty())
         {
@@ -66,7 +66,7 @@ int main(int argc,char **argv)
     }
     else if(run_type==run_type::COMPILE)
     {
-
+        code_t memoriaMNT = PARSER::run_montador(memoria);
     }
     else
     {

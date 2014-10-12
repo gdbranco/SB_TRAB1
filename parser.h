@@ -17,20 +17,22 @@ using namespace std;
 class PARSER
 {
 private:
-    vector<Define> defines_list;
-    vector<Linha> make_listaEQU(vector<Linha> _code);
-    vector<Linha> run_preproc(vector<Linha> _code);
-    int define_exists(Define procura);
+    vector<define_t> defines_list;
+    tsmb_t simb_list;
+    code_t make_listaEQU(code_t _code);
+    code_t preproc(code_t _code);
+    code_t passagiunics(code_t code);
+    int define_exists(const define_t procura);
 public:
-    static vector<Erro> erros_list;
+    static vector<erro_t> erros_list;
     /**Metodos**/
     static int islabel(const string _label);
     static int isdir(const string _dir);
     static int isinst(const string _inst);
     static int iscomment(const string _comment);
-    static vector<Linha> pre_proc(const vector<Linha> _code);
-    static void memgetline(const Linha, string& s);
-    static vector<Linha> toMEM(const string nome);
+    static code_t run_preproc(code_t _code);
+    static code_t run_montador(code_t code);
+    static code_t toMEM(const string nome);
     static string retiraComentarios(string _linha);
 };
 #endif // PARSER_H
