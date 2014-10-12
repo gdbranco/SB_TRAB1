@@ -115,12 +115,12 @@ code_t PARSER::preproc(code_t _code)
                     erros_list.push_back(erro_t(linha->nlinha,erros::SEMANTICO,erros::EQU_ndefinida));
                 }
                 token = linha->tokens.begin();
-                /**Se nao houver linhas faz a avaliacao do IF**/
+                /**Se nao houver erros faz a avaliacao do IF**/
                 while(token != linha->tokens.end() && !erro)
                 {
 //                    cout << *token;
 //                    cin.get();
-                    if(*token == diretivas::IF)
+                    if(*token == diretivas::IF) //Essa condicao é inutil, retirar depois
                     {
                         erase_currentline = true;
                     }
@@ -280,17 +280,33 @@ code_t PARSER::passagiunics(code_t code)
 {
     unsigned int PC=0;
     code_t _code = code;
+    unsigned int tamanho_inst;
     code_t::iterator linha = _code.begin();
+    int increment_add;
     while(linha!=_code.end())
     {
 //        cout << linha->nlinha << ' ' << *linha << endl;
         vector<string>::iterator token = linha->tokens.begin();
         while(token!=linha->tokens.end())
         {
-            cout << *token << ' ';
-            /**Logica para tratar token a token**/
+            increment_add = 1; //Ao chegar num novo token o incremento do endereco eh sempre 1
+            cout << PC << ' ' << *token << ' ';
+            /**
+            Logica para tratar token a token
+            Done: se label, se instruction
+            TODO: se diretiva
+            **/
+            if(islabel(*token))
+            {
+                increment_add = 0; //Se for uma label não aumenta o endereço
+            }
+            else if(isinst(*token,tamanho_inst))
+            {
+//                cout << "\nAchei inst : "<< *token << endl;
+                increment_add = tamanho_inst-1;
+            }
             token++;
-            PC++; /**Nao pode contar diretivas**/
+            PC+=increment_add; /**Nao pode contar diretivas**/
         }
         cout << endl;
         linha++;
@@ -324,8 +340,8 @@ int PARSER::define_exists(define_t procura)
 
 int PARSER::islabel(string _label)
 {
-    size_t found;
-    if((found = _label.find(':')!=string::npos) && _label[found+1] != '\0')
+    size_t found=_label.find(':');
+    if(found && _label[found+1] == '\0')
         return OK;
     return !OK;
 }
@@ -361,8 +377,9 @@ int PARSER::isdir(string _dir)
     return !OK;
 }
 //retorno = (inst valida) ? inst.opcode : 1
-int PARSER::isinst(string _inst)
+int PARSER::isinst(string _inst,unsigned int &tam_inst)
 {
+    tam_inst = instructions::tamanhoGeral;
     if(_inst == instructions::ADD.first)
     {
         return instructions::ADD.second;
@@ -398,6 +415,7 @@ int PARSER::isinst(string _inst)
     else if(_inst == instructions::COPY.first)
     {
         return instructions::COPY.second;
+        tam_inst = instructions::tamanhoCOPY;
     }
     else if(_inst == instructions::LOAD.first)
     {
@@ -418,6 +436,7 @@ int PARSER::isinst(string _inst)
     else if(_inst == instructions::STOP.first)
     {
         return instructions::STOP.second;
+        tam_inst = instructions::tamanhoSTOP;
     }
     return !OK;
 }

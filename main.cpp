@@ -7,24 +7,11 @@
 using namespace std;
 int main(int argc,char **argv)
 {
-    /**Teste do parser**/
-//    cout << PARSER::islabel("L1:") << endl;
-//    cout << PARSER::islabel("!L1") << endl;
-//    cout << PARSER::isdir("CONST") << endl;
-//    cout << PARSER::isdir("!CONST") << endl;
-//    cout << PARSER::isinst("ADD")  << endl;
-//    cout << PARSER::isinst("!ADD") << endl;
-//    cout << PARSER::iscomment(";comment") << endl;
-//    cout << PARSER::iscomment("!comment") << endl;
     code_t memoria;
     string nome_base(argv[1]);
     string run_type(argv[2]);
     string nome_arq = nome_base+".asm";
     memoria = PARSER::toMEM(nome_arq);
-    //for(unsigned int i=0;i<memoria.size();i++)
-    //{
-    //cout << memoria[i] << endl;
-    //}
     /**Se -p roda EQU**/
     if(run_type==run_type::PRE_PROCESS_EQU)
     {
@@ -74,30 +61,3 @@ int main(int argc,char **argv)
     }
     return 0;
 }
-//inutil eças funcao
-
-
-/*linha pre_proc(string memoria)
-{
-
-	stringstream s_str(memoria);
-	char * pch;
-	vector<linha> linhas;
-	linha _aux;
-	int _n_linha=0;
-	getline(s_str,s);
-	do
-	{
-		_n_linha++;
-		_aux.n_linha = _n_linha;
-		pch = strtok((char*)s.c_str(),"\t ");
-		while(pch!=NULL)
-		{
-			cout << pch << endl;
-			pch = strtok(NULL,"\t ");
-			_aux.tokens.push_back(new string(pch));
-		}
-	linhas.push_back(
-	}while(getline(s_str, s));
-	return "oi";
-}*/
