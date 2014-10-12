@@ -112,7 +112,7 @@ code_t PARSER::preproc(code_t _code)
                 /**Se houver erro o coloca na lista**/
                 if(erro)
                 {
-                    erros_list.push_back(erro_t(linha->nlinha,erros::SEMANTICO,erros::EQU_ndefinida));
+                    erros_list.push_back(erro_t(linha->nlinha,erros::SEMANTICO,erros::EQU_ndefinida)); //EQU nao definida
                 }
                 token = linha->tokens.begin();
                 /**Se nao houver erros faz a avaliacao do IF**/
@@ -280,9 +280,9 @@ code_t PARSER::passagiunics(code_t code)
 {
     unsigned int PC=0;
     code_t _code = code;
-    unsigned int tamanho_inst;
+    unsigned int tamanho_inc;
     code_t::iterator linha = _code.begin();
-    int increment_add;
+    unsigned int increment_add;
     while(linha!=_code.end())
     {
 //        cout << linha->nlinha << ' ' << *linha << endl;
@@ -300,10 +300,14 @@ code_t PARSER::passagiunics(code_t code)
             {
                 increment_add = 0; //Se for uma label não aumenta o endereço
             }
-            else if(isinst(*token,tamanho_inst))
+            else if(isinst(*token,tamanho_inc)) /**Refazer para melhorar a estrutura de instrucoes e diretivas**/
             {
 //                cout << "\nAchei inst : "<< *token << endl;
-                increment_add = tamanho_inst-1;
+                increment_add = tamanho_inc-1;
+            }
+            else if(isdir(*token,tamanho_inc))
+            {
+                increment_add = tamanho_inc-1;
             }
             token++;
             PC+=increment_add; /**Nao pode contar diretivas**/
@@ -353,27 +357,63 @@ int PARSER::iscomment(string _comment)
         return OK;
     return !OK;
 }
-
 int PARSER::isdir(string _dir)
 {
+    if(_dir == diretivas::SECTION ||
+       _dir == diretivas::TEXT    ||
+       _dir == diretivas::DATA    ||
+       _dir == diretivas::IF      ||
+       _dir == diretivas::EQU     ||
+       _dir == diretivas::END     ||
+       _dir == diretivas::CONST   ||
+       _dir == diretivas::MACRO)
+    {
+        return OK;
+    }
+    return !OK;
+}
+
+int PARSER::isdir(string _dir,unsigned int &tam_dir)
+{
+    tam_dir = 1;
     if(_dir == diretivas::SECTION)
-        return 1;
+    {
+        return OK;
+    }
     else if(_dir == diretivas::TEXT)
-        return 1;
+    {
+        return OK;
+    }
     else if(_dir == diretivas::DATA)
-        return 1;
+    {
+        return OK;
+    }
     else if(_dir == diretivas::SPACE)
-        return 1;
+    {
+        tam_dir = 2;
+        return OK;
+    }
     else if(_dir == diretivas::IF)
-        return 1;
+    {
+        return OK;
+    }
     else if(_dir == diretivas::EQU)
-        return 1;
+    {
+        return OK;
+    }
     else if(_dir == diretivas::END)
-        return 1;
+    {
+        return OK;
+    }
     else if(_dir == diretivas::CONST)
-        return 1;
+    {
+        tam_dir = 2;
+        return OK;
+    }
     else if(_dir == diretivas::MACRO)
-        return 1;
+    {
+        return OK;
+    }
     return !OK;
 }
 //retorno = (inst valida) ? inst.opcode : 1
@@ -437,6 +477,10 @@ int PARSER::isinst(string _inst,unsigned int &tam_inst)
     {
         return instructions::STOP.second;
         tam_inst = instructions::tamanhoSTOP;
+    }
+    else
+    {
+        tam_inst = 1;//Da zero na quantidade de operadores
     }
     return !OK;
 }
