@@ -15,9 +15,7 @@ struct Macro
     Macro(string _label, vector<Linha> _text_code);
 };
 
-Macro::Macro(string _label, std::vector<Linha> _text_code)
-{
-    setLabel(_label);
-    setText_code(_text_code);
-}
+Macro::Macro(string _label, std::vector<Linha> _text_code) : 
+	label(_label), text_code(_text_code) { }
+
 #endif // MACRO_H

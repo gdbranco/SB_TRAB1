@@ -20,17 +20,6 @@ int main(int argc, char *argv[]) {
 	string code_str = "";
 	vector<Erro> erros_list;
 
-	/*std::ifstream code_file("teste.asm");
-
-	if (code_file.is_open()) {
-		while(getline(code_file, line)) {
-			code_str += line;
-			code_str += "\n";
-		}
-	}
-
-	cout << code_str;*/
-
 	code_vector = PARSER::toMEM("teste.asm");
 
 	erros_list = passagem_macros(code_vector);

@@ -9,9 +9,10 @@
 #include <utility>
 #include <algorithm>
 #include <cctype>
-#include "defines.h"
 #include <fstream>
 #include <sstream>
+#include "MacroTable.h"
+#include "defines.h"
 //TODO:
 using namespace std;
 class PARSER
@@ -32,5 +33,6 @@ public:
     static void memgetline(const Linha, string& s);
     static vector<Linha> toMEM(const string nome);
     static string retiraComentarios(string _linha);
+	vector<Erro> passagem_macros(std::vector<Linha> &code);
 };
 #endif // PARSER_H

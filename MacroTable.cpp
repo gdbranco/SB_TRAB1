@@ -14,16 +14,16 @@ std::vector<Linha>::iterator MacroTable::create_macro(std::vector<Linha>::iterat
 	std::vector<Linha> macro_result;
 	Macro new_macro;
 
-	if((*it).tokens[1] != "MACRO") {
+	if(it->tokens[1] != "MACRO") {
 		erros_list.push_back(Erro(it->nlinha,erros::SEMANTICO,erros::MACRO_no_label));
 		return code.end();
 
-	} else if(!PARSER::islabel((*it).tokens[0])) {
+	} else if(!PARSER::islabel(it->tokens[0])) {
 		erros_list.push_back(Erro(it->nlinha,erros::SEMANTICO,erros::MACRO_label_no_delimiter));
 		return code.end();
 
 	} else {
-		name = (*it).tokens[0];
+		name = it->tokens[0];
 		name.erase(name.end() - 1);
 
 		it++;
@@ -33,9 +33,9 @@ std::vector<Linha>::iterator MacroTable::create_macro(std::vector<Linha>::iterat
 		Se chegar ao final sem encontrar o "endmacro" (success = false), um erro ocorre. */
 		while(it != code.end()) {
 			std::vector<string>::iterator aux;
-			aux = std::find((*it).tokens.begin(), (*it).tokens.end(), "END");
-			if( aux == (*it).tokens.end()) {
-				macro_body.push_back((*it));
+			aux = std::find(it->tokens.begin(), it->tokens.end(), "END");
+			if( aux == it->tokens.end()) {
+				macro_body.push_back(*it);
 				it++;
 
 			} else {
@@ -64,10 +64,10 @@ std::vector<Linha> MacroTable::get_macro(std::vector<Linha>::iterator it) {
 	std::vector<Linha> macro_body;
 
 	/*Pega o nome da macro e seus argumentos. Resolve caso tenha label.*/
-	if (PARSER::islabel((*it).tokens[0])) {
-		macro_name = (*it).tokens[1];
+	if (PARSER::islabel(it->tokens[0])) {
+		macro_name = it->tokens[1];
 	} else {
-		macro_name = (*it).tokens[0];
+		macro_name = it->tokens[0];
 	}
 	
 	/*Procura pela macro*/
@@ -90,7 +90,7 @@ bool MacroTable::has(std::string name) {
 	it = this->macros.begin();
 
 	while(it != this->macros.end()) {
-		if((*it).label == name) {
+		if(it->label == name) {
 			return true;
 		}
 		it++;
