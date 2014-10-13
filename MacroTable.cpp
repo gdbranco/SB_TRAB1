@@ -73,8 +73,8 @@ std::vector<Linha> MacroTable::get_macro(std::vector<Linha>::iterator it) {
 	/*Procura pela macro*/
 	macro_it = this->macros.begin();
 	while(macro_it != this->macros.end()) {
-		if (((*macro_it).getLabel() == macro_name)) {
-			macro_body = (*macro_it).getText_code();
+		if (((*macro_it).label == macro_name)) {
+			macro_body = (*macro_it).text_code;
 			break;
 		}
 		macro_it++;
@@ -90,7 +90,7 @@ bool MacroTable::has(std::string name) {
 	it = this->macros.begin();
 
 	while(it != this->macros.end()) {
-		if((*it).getLabel() == name) {
+		if((*it).label == name) {
 			return true;
 		}
 		it++;
