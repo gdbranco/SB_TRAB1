@@ -24,16 +24,18 @@ private:
     code_t passagiunics(code_t code);
     int define_exists(const define_t procura);
 public:
+    static tinst_t instruction_list; 
     static vector<erro_t> erros_list;
     /**Metodos**/
     static int islabel(const string _label);
     static int isdir(const string _dir);
     static int isdir(const string _dir,unsigned int &tam_dir);
-    static int isinst(const string _inst,unsigned int &tam_inst);
+    static bool isinst(const string _inst,inst_t& inst);
     static int iscomment(const string _comment);
     static code_t run_preproc(code_t _code);
     static code_t run_montador(code_t code);
     static code_t toMEM(const string nome_arq);
     static string retiraComentarios(string _linha);
+    static void inicializa_paradas();
 };
 #endif // PARSER_H

@@ -17,23 +17,23 @@ namespace erros
 }
 namespace instructions
 {
-    pair<string,int> ADD    = make_pair("ADD",1);
-    pair<string,int> SUB    = make_pair("SUB",2);
-    pair<string,int> MULT   = make_pair("MULT",3);
-    pair<string,int> DIV    = make_pair("DIV",4);
-    pair<string,int> JMP    = make_pair("JMP",5);
-    pair<string,int> JMPN   = make_pair("JMPN",6);
-    pair<string,int> JMPP   = make_pair("JMPP",7);
-    pair<string,int> JMPZ   = make_pair("JUMPZ",8);
-    pair<string,int> COPY   = make_pair("COPY",9);
-    pair<string,int> LOAD   = make_pair("LOAD",10);
-    pair<string,int> STORE  = make_pair("STORE",11);
-    pair<string,int> INPUT  = make_pair("INPUT",12);
-    pair<string,int> OUTPUT = make_pair("OUTPUT",13);
-    pair<string,int> STOP   = make_pair("STOP",14);
-    int tamanhoGeral = 2;
-    int tamanhoCOPY  = 3;
-    int tamanhoSTOP  = 1;
+    unsigned int tamanhoGeral = 2;
+    unsigned int tamanhoCOPY  = 3;
+    unsigned int tamanhoSTOP  = 1;
+    inst_t ADD    = inst_t("ADD",1,tamanhoGeral,tamanhoGeral-1);
+    inst_t SUB    = inst_t("SUB",2,tamanhoGeral,tamanhoGeral-1);
+    inst_t MULT   = inst_t("MULT",3,tamanhoGeral,tamanhoGeral-1);
+    inst_t DIV    = inst_t("DIV",4,tamanhoGeral,tamanhoGeral-1);
+    inst_t JMP    = inst_t("JMP",5,tamanhoGeral,tamanhoGeral-1);
+    inst_t JMPN   = inst_t("JMPN",6,tamanhoGeral,tamanhoGeral-1);
+    inst_t JMPP   = inst_t("JMPP",7,tamanhoGeral,tamanhoGeral-1);
+    inst_t JMPZ   = inst_t("JMPZ",8,tamanhoGeral,tamanhoGeral-1);
+    inst_t COPY   = inst_t("COPY",9,tamanhoCOPY,tamanhoCOPY-1);
+    inst_t LOAD   = inst_t("LOAD",10,tamanhoGeral,tamanhoGeral-1);
+    inst_t STORE  = inst_t("STORE",11,tamanhoGeral,tamanhoGeral-1);
+    inst_t INPUT  = inst_t("INPUT",12,tamanhoGeral,tamanhoGeral-1);
+    inst_t OUTPUT = inst_t("OUTPUT",13,tamanhoGeral,tamanhoGeral-1);
+    inst_t STOP   = inst_t("STOP",14,tamanhoSTOP,tamanhoSTOP-1);
 }
 namespace diretivas
 {

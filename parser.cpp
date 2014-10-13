@@ -1,5 +1,6 @@
 #include "parser.h"
 vector<erro_t> PARSER::erros_list;
+tinst_t PARSER::instruction_list;
 string PARSER::retiraComentarios(string _linha)
 {
     size_t found = _linha.find(';');
@@ -19,8 +20,26 @@ string PARSER::retiraComentarios(string _linha)
     }
     return _linha;
 }
+void PARSER::inicializa_paradas()
+{
+	instruction_list.push_back(instructions::ADD);
+	instruction_list.push_back(instructions::SUB);
+	instruction_list.push_back(instructions::MULT);
+	instruction_list.push_back(instructions::DIV);
+	instruction_list.push_back(instructions::JMP);
+	instruction_list.push_back(instructions::JMPN);
+	instruction_list.push_back(instructions::JMPP);
+	instruction_list.push_back(instructions::JMPZ);
+	instruction_list.push_back(instructions::COPY);
+	instruction_list.push_back(instructions::LOAD);
+	instruction_list.push_back(instructions::STORE);
+	instruction_list.push_back(instructions::INPUT);
+	instruction_list.push_back(instructions::OUTPUT);
+	instruction_list.push_back(instructions::STOP);
+}
 code_t PARSER::toMEM(string nome_arq)
 {
+    inicializa_paradas();
     code_t memoria;
     vector<string> _tokens;
     int _linha=0;
@@ -277,13 +296,14 @@ code_t PARSER::passagiunics(code_t code)
     unsigned int tamanho_inc;
     code_t::iterator linha = _code.begin();
     unsigned int increment_add;
-    unsigned int counter,counter_operadores;
+    //unsigned int counter,counter_operadores;
     while(linha!=_code.end())
     {
 	  //cout << linha->nlinha << ' ' << *linha << endl;
         vector<string>::iterator token = linha->tokens.begin();
-        while(token!=linha->tokens.end() && counter<counter_operadores)
+        while(token!=linha->tokens.end()) 
         {
+		inst_t rinst;
             increment_add = 1; //Ao chegar num novo token o incremento do endereco eh sempre 1
             cout << PC << ' ' << *token << ' ';
             /**
@@ -295,10 +315,10 @@ code_t PARSER::passagiunics(code_t code)
             {
                 increment_add = 0; //Se for uma label não aumenta o endereço
             }
-            else if(isinst(*token,tamanho_inc)) /**Refazer para melhorar a estrutura de instrucoes e diretivas**/
+            else if(isinst(*token,rinst)) /**Refazer para melhorar a estrutura de instrucoes e diretivas**/
             {
-//                cout << "\nAchei inst : "<< *token << endl;
-                increment_add = tamanho_inc-1;
+		 	cout << "\nAchei inst : "<< *token << endl;
+                  increment_add = rinst.qtd_operandos;
             }
             else if(isdir(*token,tamanho_inc))
             {
@@ -412,70 +432,18 @@ int PARSER::isdir(string _dir,unsigned int &tam_dir)
     return !OK;
 }
 //retorno = (inst valida) ? inst.opcode : 1
-int PARSER::isinst(string _inst,unsigned int &tam_inst)
+bool PARSER::isinst(string _inst,inst_t& rinst)
 {
-    tam_inst = instructions::tamanhoGeral;
-    if(_inst == instructions::ADD.first)
-    {
-        return instructions::ADD.second;
-    }
-    else if(_inst == instructions::SUB.first)
-    {
-        return instructions::SUB.second;
-    }
-    else if(_inst == instructions::MULT.first)
-    {
-        return instructions::MULT.second;
-    }
-    else if(_inst == instructions::DIV.first)
-    {
-        return instructions::DIV.second;
-    }
-    else if(_inst == instructions::JMP.first)
-    {
-        return instructions::JMP.second;
-    }
-    else if(_inst == instructions::JMPN.first)
-    {
-        return instructions::JMPN.second;
-    }
-    else if(_inst == instructions::JMPP.first)
-    {
-        return instructions::JMPP.second;
-    }
-    else if(_inst == instructions::JMPZ.first)
-    {
-        return instructions::JMPZ.second;
-    }
-    else if(_inst == instructions::COPY.first)
-    {
-        return instructions::COPY.second;
-        tam_inst = instructions::tamanhoCOPY;
-    }
-    else if(_inst == instructions::LOAD.first)
-    {
-        return instructions::LOAD.second;
-    }
-    else if(_inst == instructions::STORE.first)
-    {
-        return instructions::STORE.second;
-    }
-    else if(_inst == instructions::INPUT.first)
-    {
-        return instructions::INPUT.second;
-    }
-    else if(_inst == instructions::OUTPUT.first)
-    {
-        return instructions::OUTPUT.second;
-    }
-    else if(_inst == instructions::STOP.first)
-    {
-        return instructions::STOP.second;
-        tam_inst = instructions::tamanhoSTOP;
-    }
-    else
-    {
-        tam_inst = 1;//Da zero na quantidade de operadores
-    }
-    return !OK;
+	bool achei = false;
+	tinst_t::iterator inst_cur=instruction_list.begin();
+	while(inst_cur!=instruction_list.end() && !achei)
+	{
+		if(inst_cur->inst_name == _inst)
+		{
+			rinst = *inst_cur;
+			achei = true;
+		}
+		inst_cur++;
+	}
+	return achei;
 }

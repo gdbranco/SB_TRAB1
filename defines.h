@@ -12,7 +12,8 @@ typedef struct _smb
     bool def;
     vector<int> lista_end;
     _smb(){}
-    _smb(const string _simb, const int _value,const bool _def,const vector<int> _lista_end):simb(_simb),value(_value),def(_def),lista_end(_lista_end) { }
+    _smb(const string _simb, const int _value,const bool _def,const vector<int> _lista_end):
+	    simb(_simb),value(_value),def(_def),lista_end(_lista_end) {}
     friend ostream& operator<<(ostream& os,const _smb& it)
     {
         os << it.simb << ' ';
@@ -30,12 +31,29 @@ typedef struct _smb
     }
 }smb_t;
 typedef vector<smb_t> tsmb_t;
+typedef struct _inst
+{
+	string inst_name;
+	unsigned int inst_hex;
+	unsigned int tam_inst;
+	unsigned int qtd_operandos;
+	_inst(){}
+	_inst(const string _inst_name,const unsigned int _inst_hex,unsigned int _tam_inst,unsigned int _qtd_operandos):
+		inst_name(_inst_name),inst_hex(_inst_hex),tam_inst(_tam_inst),qtd_operandos(_qtd_operandos){}
+	friend ostream& operator<<(ostream& os,const _inst& it)
+	{
+		os << it.inst_name << ' ' << it.inst_hex << ' ' << it.tam_inst << ' ' << it.qtd_operandos;
+		return os;
+	}
+}inst_t;
+typedef vector<inst_t> tinst_t;
 typedef struct _linha
 {
     int nlinha;
     vector<string> tokens;
     _linha() {}
-    _linha(int _nlinha, vector<string> _tokens):nlinha(_nlinha),tokens(_tokens) { }
+    _linha(int _nlinha, vector<string> _tokens):
+	    nlinha(_nlinha),tokens(_tokens) {}
     friend ostream& operator<<(ostream& os, const _linha& it)
     {
         for(unsigned int i =0; i<it.tokens.size(); i++)
@@ -55,7 +73,8 @@ typedef struct _define
     string label;
     int value;
     _define(){}
-    _define(string _label,int _value):label(_label),value(_value) { }
+    _define(string _label,int _value):
+	    label(_label),value(_value) {}
     friend bool operator==(_define& define1, _define& define2)
     {
         return (define1.label == define2.label);
@@ -72,7 +91,8 @@ typedef struct _erro
     string type;
     string reason;
     _erro(){}
-    _erro(int _nlinha,string _type,string _reason):nlinha(_nlinha),type(_type),reason(_reason){ }
+    _erro(int _nlinha,string _type,string _reason):
+	    nlinha(_nlinha),type(_type),reason(_reason){}
     friend ostream& operator<<(ostream& os,const _erro& it)
     {
         os << "erro : linha "<<it.nlinha << ", devido a " << it.type << ", pois " << it.reason;
@@ -103,23 +123,23 @@ namespace sections
 }
 namespace instructions
 {
-    extern pair<string,int> ADD;
-    extern pair<string,int> SUB;
-    extern pair<string,int> MULT;
-    extern pair<string,int> DIV;
-    extern pair<string,int> JMP;
-    extern pair<string,int> JMPN;
-    extern pair<string,int> JMPP;
-    extern pair<string,int> JMPZ;
-    extern pair<string,int> COPY;
-    extern pair<string,int> LOAD;
-    extern pair<string,int> STORE;
-    extern pair<string,int> INPUT;
-    extern pair<string,int> OUTPUT;
-    extern pair<string,int> STOP;
-    extern int tamanhoGeral;
-    extern int tamanhoCOPY;
-    extern int tamanhoSTOP;
+    extern inst_t ADD;
+    extern inst_t SUB;
+    extern inst_t MULT;
+    extern inst_t DIV;
+    extern inst_t JMP;
+    extern inst_t JMPN;
+    extern inst_t JMPP;
+    extern inst_t JMPZ;
+    extern inst_t COPY;
+    extern inst_t LOAD;
+    extern inst_t STORE;
+    extern inst_t INPUT;
+    extern inst_t OUTPUT;
+    extern inst_t STOP;
+    extern unsigned int tamanhoGeral;
+    extern unsigned int tamanhoCOPY;
+    extern unsigned int tamanhoSTOP;
 }
 namespace diretivas
 {
