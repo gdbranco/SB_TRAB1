@@ -6,18 +6,23 @@
 #include <sstream>
 
 
-/*Cria a macro em uma linha referenciada pelo iterator code_it e guarda na tabela interna do objeto.*/
-std::vector<Linha>::iterator MacroTable::create_macro(std::vector<Linha>::iterator &it, std::vector<Linha> &code, std::vector<Erro> &erros_list) {
+/* Cria a macro em uma linha referenciada pelo iterator code_it 
+ * e guarda na tabela interna do objeto.*/
+code_t::iterator  MacroTable::create_macro(code_t::iterator &it, code_t _code,
+											std::vector<erro_t> &erros_list) {
 	std::string name;
 	std::vector<Linha> macro_body;
+	code_t code(_code);
 	bool success = false;
 	std::vector<Linha> macro_result;
 	Macro new_macro;
 
+	/*Erro se o segundo token não é MACRO*/
 	if(it->tokens[1] != "MACRO") {
 		erros_list.push_back(Erro(it->nlinha,erros::SEMANTICO,erros::MACRO_no_label));
 		return code.end();
 
+	/*Erro se o primeiro token não é uma label válida*/
 	} else if(!PARSER::islabel(it->tokens[0])) {
 		erros_list.push_back(Erro(it->nlinha,erros::SEMANTICO,erros::MACRO_label_no_delimiter));
 		return code.end();
@@ -34,7 +39,7 @@ std::vector<Linha>::iterator MacroTable::create_macro(std::vector<Linha>::iterat
 		while(it != code.end()) {
 			std::vector<string>::iterator aux;
 			aux = std::find(it->tokens.begin(), it->tokens.end(), "END");
-			if( aux == it->tokens.end()) {
+			if( aux == it->tokens.end() ) {
 				macro_body.push_back(*it);
 				it++;
 
@@ -58,7 +63,7 @@ std::vector<Linha>::iterator MacroTable::create_macro(std::vector<Linha>::iterat
 
  /* Função que retorna o corpo de uma macro.
   * Recebe o iterador referente à linha da chamada da macro. */
-std::vector<Linha> MacroTable::get_macro(std::vector<Linha>::iterator it) {
+code_t MacroTable::get_macro(code_t::iterator it) {
 	std::string macro_name;
 	std::vector<Macro>::iterator macro_it;
 	std::vector<Linha> macro_body;

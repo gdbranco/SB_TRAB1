@@ -1,5 +1,5 @@
 #include "parser.h"
-vector<Erro> PARSER::erros_list;
+vector<erro_t> PARSER::erros_list;
 string PARSER::retiraComentarios(string _linha)
 {
     size_t found = _linha.find(';');
@@ -19,14 +19,14 @@ string PARSER::retiraComentarios(string _linha)
     }
     return _linha;
 }
-vector<Linha> PARSER::toMEM(string nome)
+code_t PARSER::toMEM(string nome_arq)
 {
-    vector<Linha> memoria;
+    code_t memoria;
     vector<string> _tokens;
     int _linha=0;
     fstream sc;
     char* pch;
-    sc.open(nome.c_str());
+    sc.open(nome_arq.c_str());
     string s;
     while(getline(sc,s))
     {
@@ -41,33 +41,23 @@ vector<Linha> PARSER::toMEM(string nome)
 //                cout << pch << endl;
                 pch = strtok(NULL,"\t ");
             }
-            memoria.push_back(Linha(_linha,_tokens));
+            memoria.push_back(linha_t(_linha,_tokens));
         }
         _tokens.clear();
     }
     sc.close();
     return memoria;
 }
-void PARSER::memgetline(const Linha _code, string &s)
-{
-    s.clear();
-    for(unsigned int j=0; j<_code.tokens.size(); j++)
-    {
-        s.append(_code.tokens[j]);
-        s.append(" ");
-    }
-    s.erase(s.length()-1);
-}
-vector<Linha> PARSER::run_preproc(vector<Linha> _code)
+code_t PARSER::preproc(code_t _code)
 {
     bool erase_currentline;
     bool erase_nextline;
     bool erro;
     bool achei;
-    vector<Linha> code = _code;
-    vector<Linha>::iterator linha = code.begin();
+    code_t code = _code;
+    code_t::iterator linha = code.begin();
     vector<string>::iterator token;
-    vector<Define>::iterator define;
+    vector<define_t>::iterator define;
     if(!code.empty())
     {
         while(linha!=code.end())
@@ -78,22 +68,6 @@ vector<Linha> PARSER::run_preproc(vector<Linha> _code)
             //cout << define->label.length();
             //cout << define->label.substr(0,define->label.length()-1);
             //cin.get();
-            /**Procura um label definido na linha**/
-//            token = linha->tokens.begin();
-//                /**Substitui os labels definidos na linha por seu valor EQU**/
-//                while(token != linha->tokens.end())
-//                {
-//                    define = defines_list.begin();
-//                    while(define!=defines_list.end())
-//                    {
-//                        stringstream ss;
-//                        ss << define->value;
-//                        if(*token == define->label.substr(0,define->label.length()-1))
-//                            *token = ss.str();
-//                        define++;
-//                    }
-//                    token++;
-//                }
             /**Checa se a linha eh um IF e se a proxima é valida**/
             if((find(linha->tokens.begin(),linha->tokens.end(),diretivas::IF)!=linha->tokens.end()))
             {
@@ -138,15 +112,15 @@ vector<Linha> PARSER::run_preproc(vector<Linha> _code)
                 /**Se houver erro o coloca na lista**/
                 if(erro)
                 {
-                    erros_list.push_back(Erro(linha->nlinha,erros::SEMANTICO,erros::EQU_ndefinida));
+                    erros_list.push_back(erro_t(linha->nlinha,erros::SEMANTICO,erros::EQU_ndefinida)); //EQU nao definida
                 }
                 token = linha->tokens.begin();
-                /**Se nao houver linhas faz a avaliacao do IF**/
+                /**Se nao houver erros faz a avaliacao do IF**/
                 while(token != linha->tokens.end() && !erro)
                 {
 //                    cout << *token;
 //                    cin.get();
-                    if(*token == diretivas::IF)
+                    if(*token == diretivas::IF) //Essa condicao é inutil, retirar depois
                     {
                         erase_currentline = true;
                     }
@@ -173,10 +147,10 @@ vector<Linha> PARSER::run_preproc(vector<Linha> _code)
     }
     return code;
 }
-vector<Linha> PARSER::make_listaEQU(vector<Linha> _code)
+code_t PARSER::make_listaEQU(code_t _code)
 {
-    vector<Linha> code = _code;
-    vector<Linha>::iterator linha = code.begin();
+    code_t code = _code;
+    code_t::iterator linha = code.begin();
     vector<string>::iterator token;
     bool erased;
     bool labeled;
@@ -236,7 +210,7 @@ vector<Linha> PARSER::make_listaEQU(vector<Linha> _code)
                 {
                     if(label_counter<2)
                     {
-                        Define _aux(label,value);
+                        define_t _aux(label,value);
                         if(!define_exists(_aux))
                         {
                             defines_list.push_back(_aux);
@@ -262,29 +236,23 @@ vector<Linha> PARSER::make_listaEQU(vector<Linha> _code)
             switch(erro)
             {
             case 1:
-                erros_list.push_back(Erro(linha->nlinha,erros::SINTATICO,erros::label_redefinida));
+                erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::label_redefinida));
                 break;
             case 2:
-                erros_list.push_back(Erro(linha->nlinha,erros::SINTATICO,erros::label_dupla));
+                erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::label_dupla));
                 break;
             case 3:
-                erros_list.push_back(Erro(linha->nlinha,erros::SINTATICO,erros::EQU_nlabeled));
+                erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::EQU_nlabeled));
                 break;
             default:
                 //Sem erros
                 break;
             }
-//            unsigned int i=0;
-//            while(i<linha->tokens.size())
-//            {
-//                cout << linha->tokens[i];
-//                i++;
-//            }
             if(!erased)
                 linha++;
         }
         /**Mostrando o vetor para testes**/
-        vector<Define>::iterator it = defines_list.begin();
+//        vector<define_t>::iterator it = defines_list.begin();
 //        while(it!=defines_list.end())
 //        {
 //            cout << *it<< endl;
@@ -294,21 +262,21 @@ vector<Linha> PARSER::make_listaEQU(vector<Linha> _code)
     }
     return code;
 }
-vector<Linha> PARSER::pre_proc(vector<Linha> code)
+code_t PARSER::run_preproc(code_t code)
 {
     PARSER p;
     code = p.make_listaEQU(code);
-    code = p.run_preproc(code);
+    code = p.preproc(code);
     return code;
 }
 
-
 /*Remover definições de macros!*/
-vector<Erro> PARSER::passagem_macros(std::vector<Linha> &code) {
-	std::vector<Linha>::iterator it;
-	std::vector<Linha>::iterator m_beg, m_end;
-	std::vector<Linha> macro_result;
+code_t PARSER::passagem_macros(code_t _code) {
+	code_t::iterator it;
+	code_t::iterator m_beg, m_end;
+	code_t macro_result;
 	vector<Erro> erros_list;
+	code_t code(_code); 
 	MacroTable mct;
 
 	it = code.begin();
@@ -340,13 +308,69 @@ vector<Erro> PARSER::passagem_macros(std::vector<Linha> &code) {
 		} 
 		it++;
 	}
-	return erros_list;
+	return code;
 }
 
-
-int PARSER::define_exists(Define procura)
+/**Metodo montador**/
+code_t PARSER::passagiunics(code_t code)
 {
-    vector<Define>::iterator define;
+    unsigned int PC=0;
+    code_t _code = code;
+    unsigned int tamanho_inc;
+    code_t::iterator linha = _code.begin();
+    unsigned int increment_add;
+    while(linha!=_code.end())
+    {
+	  //cout << linha->nlinha << ' ' << *linha << endl;
+        vector<string>::iterator token = linha->tokens.begin();
+        while(token!=linha->tokens.end())
+        {
+            increment_add = 1; //Ao chegar num novo token o incremento do endereco eh sempre 1
+            cout << PC << ' ' << *token << ' ';
+            /**
+            Logica para tratar token a token
+            Done: se label, se instruction
+            TODO: se diretiva
+            **/
+            if(islabel(*token))
+            {
+                increment_add = 0; //Se for uma label não aumenta o endereço
+            }
+            else if(isinst(*token,tamanho_inc)) /**Refazer para melhorar a estrutura de instrucoes e diretivas**/
+            {
+//                cout << "\nAchei inst : "<< *token << endl;
+                increment_add = tamanho_inc-1;
+            }
+            else if(isdir(*token,tamanho_inc))
+            {
+                increment_add = tamanho_inc-1;
+            }
+            token++;
+            PC+=increment_add; /**Nao pode contar diretivas**/
+        }
+        cout << endl;
+        linha++;
+    }
+    cout << "END FINAL : " << PC << endl;
+    return _code;
+}
+
+code_t PARSER::run_macros(code_t code)
+{
+    PARSER p;
+    code = p.passagem_macros(code);
+    return code;
+}
+
+code_t PARSER::run_montador(code_t code)
+{
+    PARSER p;
+    code = p.passagiunics(code);
+    return code;
+}
+int PARSER::define_exists(define_t procura)
+{
+    vector<define_t>::iterator define;
     if(!defines_list.empty())
     {
         define = defines_list.begin();
@@ -361,7 +385,6 @@ int PARSER::define_exists(Define procura)
     }
     return !OK;
 }
-
 
 int PARSER::islabel(string _label)
 {
@@ -378,32 +401,69 @@ int PARSER::iscomment(string _comment)
         return OK;
     return !OK;
 }
-
 int PARSER::isdir(string _dir)
 {
+    if(_dir == diretivas::SECTION ||
+       _dir == diretivas::TEXT    ||
+       _dir == diretivas::DATA    ||
+       _dir == diretivas::IF      ||
+       _dir == diretivas::EQU     ||
+       _dir == diretivas::END     ||
+       _dir == diretivas::CONST   ||
+       _dir == diretivas::MACRO)
+    {
+        return OK;
+    }
+    return !OK;
+}
+
+int PARSER::isdir(string _dir,unsigned int &tam_dir)
+{
+    tam_dir = 1;
     if(_dir == diretivas::SECTION)
-        return 1;
+    {
+        return OK;
+    }
     else if(_dir == diretivas::TEXT)
-        return 1;
+    {
+        return OK;
+    }
     else if(_dir == diretivas::DATA)
-        return 1;
+    {
+        return OK;
+    }
     else if(_dir == diretivas::SPACE)
-        return 1;
+    {
+        tam_dir = 2;
+        return OK;
+    }
     else if(_dir == diretivas::IF)
-        return 1;
+    {
+        return OK;
+    }
     else if(_dir == diretivas::EQU)
-        return 1;
+    {
+        return OK;
+    }
     else if(_dir == diretivas::END)
-        return 1;
+    {
+        return OK;
+    }
     else if(_dir == diretivas::CONST)
-        return 1;
+    {
+        tam_dir = 2;
+        return OK;
+    }
     else if(_dir == diretivas::MACRO)
-        return 1;
+    {
+        return OK;
+    }
     return !OK;
 }
 //retorno = (inst valida) ? inst.opcode : 1
-int PARSER::isinst(string _inst)
+int PARSER::isinst(string _inst,unsigned int &tam_inst)
 {
+    tam_inst = instructions::tamanhoGeral;
     if(_inst == instructions::ADD.first)
     {
         return instructions::ADD.second;
@@ -439,6 +499,7 @@ int PARSER::isinst(string _inst)
     else if(_inst == instructions::COPY.first)
     {
         return instructions::COPY.second;
+        tam_inst = instructions::tamanhoCOPY;
     }
     else if(_inst == instructions::LOAD.first)
     {
@@ -459,6 +520,11 @@ int PARSER::isinst(string _inst)
     else if(_inst == instructions::STOP.first)
     {
         return instructions::STOP.second;
+        tam_inst = instructions::tamanhoSTOP;
+    }
+    else
+    {
+        tam_inst = 1;//Da zero na quantidade de operadores
     }
     return !OK;
 }

@@ -1,16 +1,22 @@
 #include "defines.h"
+namespace run_type
+{
+    string PRE_PROCESS_EQU = "-p";
+    string PRE_PROCESS_MACRO = "-m";
+    string COMPILE = "-o";
+}
 namespace erros
 {
-    string SINTATICO = "ERRO SINTATICO";
-    string SEMANTICO = "ERRO SEMANTICO";
-    string LEXICO    = "ERRO LEXICO";
-    string label_redefinida = "Redefinicao de label";
-    string label_dupla      = "Duas labels na mesma linha";
-    string EQU_nlabeled     = "EQU sem label";
-    string EQU_ndefinida  = "EQU nao definido";
-    string MACRO_no_label  = "Macro não pode ser definida sem label";
-    string MACRO_label_no_delimiter  = "Label da macro precisa terminar em ':'";
-    string MACRO_endless  = "Macro sem delimitação final";
+    string SINTATICO                = "ERRO SINTATICO";
+    string SEMANTICO                = "ERRO SEMANTICO";
+    string LEXICO                   = "ERRO LEXICO";
+    string label_redefinida         = "Redefinicao de label";
+    string label_dupla              = "Duas labels na mesma linha";
+    string EQU_nlabeled             = "EQU sem label";
+    string EQU_ndefinida            = "EQU nao definido";
+    string MACRO_no_label           = "Macro não pode ser definida sem label";
+    string MACRO_label_no_delimiter = "Label da macro precisa terminar em ':'";
+    string MACRO_endless            = "Macro sem delimitação final";
 }
 namespace instructions
 {
