@@ -66,8 +66,17 @@ typedef struct _linha
         }
         return os;
     }
-} linha_t;
+} linha_t, Linha;
 typedef vector<linha_t> code_t;
+
+struct Macro 
+{
+	string label;
+    code_t text_code;
+    Macro(){}
+	Macro(string _label, code_t _text_code) : label(_label), text_code(_text_code) { }
+};
+
 typedef struct _define
 {
     string label;
@@ -84,7 +93,7 @@ typedef struct _define
         os << it.label << ' ' << it.value;
         return os;
     }
-}define_t;
+}define_t, Define;
 typedef struct _erro
 {
     int nlinha;
@@ -98,7 +107,7 @@ typedef struct _erro
         os << "erro : linha "<<it.nlinha << ", devido a " << it.type << ", pois " << it.reason;
         return os;
     }
-}erro_t;
+}erro_t, Erro;
 namespace run_type
 {
     extern string PRE_PROCESS_EQU;
@@ -114,6 +123,9 @@ namespace erros
     extern string label_dupla;
     extern string EQU_nlabeled;
     extern string EQU_ndefinida;
+    extern string MACRO_no_label;
+    extern string MACRO_label_no_delimiter;
+    extern string MACRO_endless;
 }
 namespace sections
 {

@@ -5,6 +5,9 @@
 /**Testes**/
 #include "parser.h"
 using namespace std;
+
+void handle_pass(std::string nome_arq, code_t &memoria, const string run_type, bool log);
+
 int main(int argc,char **argv)
 {
     code_t memoria;
@@ -12,52 +15,76 @@ int main(int argc,char **argv)
     string run_type(argv[2]);
     string nome_arq = nome_base+".asm";
     memoria = PARSER::toMEM(nome_arq);
-    /**Se -p roda EQU**/
+    /**Roda as passagens apropriadas dependendo da flag passada
+	 * -p roda só pré-processamento, -m roda macros também, -o roda tudo**/
     if(run_type==run_type::PRE_PROCESS_EQU)
     {
-        PARSER::erros_list.clear();
-        nome_arq.clear();
-        nome_arq = nome_base+".pre";
-        code_t memoriaEQU = PARSER::run_preproc(memoria);
-        /**Se nao houver erros e a memoria nao for vazia abre o arquivo .pre**/
-        if(!memoriaEQU.empty() && PARSER::erros_list.empty())
-        {
-            ofstream myarq;
-            myarq.open(nome_arq.c_str());
-            for(unsigned int i=0; i<memoriaEQU.size(); i++)
-            {
-                //cout << memoriaEQU[i].nlinha << ' ';
-                myarq << memoriaEQU[i];
-                //cout << memoriaEQU[i];
-                if(i!=memoriaEQU.size()-1)
-                {
-                    myarq << endl;
-                    //cout << endl;
-                }
-            }
-            myarq.close();
-        }
-        /**Se houver erros nao abre o arquivo e mostra os erros na tela**/
-        else
-        {
-            cout << "---ERROS---" << endl;
-            for(unsigned int i=0; i<PARSER::erros_list.size(); i++)
-            {
-                cout << PARSER::erros_list[i] << endl;
-            }
-        }
+		handle_pass(string(nome_base + ".pre"), memoria, run_type::PRE_PROCESS_EQU, true);
     }
     else if(run_type==run_type::PRE_PROCESS_MACRO)
     {
-
+		handle_pass(string(nome_base + ".pre"), memoria, run_type::PRE_PROCESS_EQU, false);
+		handle_pass(string(nome_base + ".mcr"), memoria, run_type::PRE_PROCESS_MACRO, true);
     }
     else if(run_type==run_type::COMPILE)
     {
-        code_t memoriaMNT = PARSER::run_montador(memoria);
+		handle_pass(string(nome_base + ".pre"), memoria, run_type::PRE_PROCESS_EQU, false);
+		handle_pass(string(nome_base + ".mcr"), memoria, run_type::PRE_PROCESS_MACRO, false);
+		handle_pass(string(nome_base + ".o"), memoria, run_type::COMPILE, true);
     }
     else
     {
         cout << "Run type nao definido" << endl;
     }
     return 0;
+}
+
+void handle_pass(std::string nome_arq, code_t &memoria, const string run_type, bool log) {
+	code_t memoriaLOCAL;
+
+	/*Roda a passagem correta e seta a memória*/
+	if (run_type==run_type::PRE_PROCESS_EQU) {
+		memoriaLOCAL = PARSER::run_preproc(memoria);
+	} else if (run_type==run_type::PRE_PROCESS_MACRO) {
+		memoriaLOCAL = PARSER::run_macros(memoria);
+	} else {
+		memoriaLOCAL = PARSER::run_montador(memoria);
+	}
+		
+	
+	ofstream myarq;
+
+	/*Loga os erros e imprime o arquivo*/
+	if (log) {
+		myarq.open(nome_arq.c_str());
+
+		if(!memoriaLOCAL.empty() && PARSER::erros_list.empty()) {
+			for(unsigned int i=0; i<memoriaLOCAL.size(); i++)
+			{
+				//cout << memoriaEQU[i].nlinha << ' ';
+				//cout << memoriaMACRO[i];
+				myarq << memoriaLOCAL[i];
+				if(i!=memoriaLOCAL.size()-1)
+				{
+					myarq << endl;
+				}
+
+			}
+
+		}
+		else
+		{
+			cout << "---ERROS---" << endl;
+			for(unsigned int i=0; i<PARSER::erros_list.size(); i++)
+			{
+				cout << PARSER::erros_list[i] << endl;
+			}
+		}
+
+		myarq.close();
+	}
+
+	/*Seta a memoria passada para a memória local*/
+	memoria = memoriaLOCAL;
+
 }

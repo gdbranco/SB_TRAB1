@@ -20,6 +20,7 @@ string PARSER::retiraComentarios(string _linha)
     }
     return _linha;
 }
+
 void PARSER::inicializa_paradas()
 {
 	instruction_list.push_back(instructions::ADD);
@@ -37,6 +38,7 @@ void PARSER::inicializa_paradas()
 	instruction_list.push_back(instructions::OUTPUT);
 	instruction_list.push_back(instructions::STOP);
 }
+
 code_t PARSER::toMEM(string nome_arq)
 {
     inicializa_paradas();
@@ -288,6 +290,46 @@ code_t PARSER::run_preproc(code_t code)
     code = p.preproc(code);
     return code;
 }
+
+code_t PARSER::passagem_macros(code_t _code) {
+	code_t::iterator it;
+	code_t::iterator m_beg, m_end;
+	code_t macro_result;
+	code_t code(_code); 
+	MacroTable mct;
+
+	it = code.begin();
+	while(it != code.end()) {
+		/*Se a linha possui "macro", é uma declaração que deve ser colocada na tabela.*/
+		if (std::find(it->tokens.begin(), it->tokens.end(), "MACRO") != it->tokens.end()) {
+			/*Guarda o indice do iterador para recuperá-lo após apagar do vetor*/
+			int aux = code.begin() - it;
+			m_beg = it;
+			m_end = mct.create_macro(it, code, erros_list);
+			if(m_end != code.end()) {
+				code.erase(m_beg, m_end + 1);
+			}
+			it = code.begin() + aux;
+			
+
+		/*Caso contrário, confere se possui label e declaração e substitui o código.*/
+		} else if (  (PARSER::islabel(it->tokens[0])) && mct.has(it->tokens[1])  ) {
+			macro_result = mct.get_macro(it); 
+			code.erase(it);
+			code.insert(it, macro_result.begin(), macro_result.end());
+
+		/*Substitui a chamada pelo corpo da macro*/
+		} else if (  mct.has(it->tokens[0])  ) {
+			macro_result = mct.get_macro(it); 
+			code.erase(it);
+			code.insert(it, macro_result.begin(), macro_result.end());
+
+		} 
+		it++;
+	}
+	return code;
+}
+
 /**Metodo montador**/
 code_t PARSER::passagiunics(code_t code)
 {
@@ -333,6 +375,14 @@ code_t PARSER::passagiunics(code_t code)
     cout << "END FINAL : " << PC << endl;
     return _code;
 }
+
+code_t PARSER::run_macros(code_t code)
+{
+    PARSER p;
+    code = p.passagem_macros(code);
+    return code;
+}
+
 code_t PARSER::run_montador(code_t code)
 {
     PARSER p;

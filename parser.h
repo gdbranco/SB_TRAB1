@@ -9,9 +9,10 @@
 #include <utility>
 #include <algorithm>
 #include <cctype>
-#include "defines.h"
 #include <fstream>
 #include <sstream>
+#include "defines.h"
+#include "MacroTable.h"
 //TODO:
 using namespace std;
 class PARSER
@@ -21,6 +22,7 @@ private:
     tsmb_t simb_list;
     code_t make_listaEQU(code_t _code);
     code_t preproc(code_t _code);
+	code_t passagem_macros(code_t _code);
     code_t passagiunics(code_t code);
     int define_exists(const define_t procura);
 public:
@@ -33,6 +35,7 @@ public:
     static bool isinst(const string _inst,inst_t& inst);
     static int iscomment(const string _comment);
     static code_t run_preproc(code_t _code);
+    static code_t run_macros(code_t code);
     static code_t run_montador(code_t code);
     static code_t toMEM(const string nome_arq);
     static string retiraComentarios(string _linha);
