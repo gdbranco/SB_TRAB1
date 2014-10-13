@@ -12,13 +12,7 @@ typedef struct _smb
     bool def;
     vector<int> lista_end;
     _smb(){}
-    _smb(const string _simb, const int _value,const bool _def,const vector<int> _lista_end)
-    {
-        this->simb = _simb;
-        this->value = _value;
-        this->def   = _def;
-        this->lista_end = _lista_end;
-    }
+    _smb(const string _simb, const int _value,const bool _def,const vector<int> _lista_end):simb(_simb),value(_value),def(_def),lista_end(_lista_end) { }
     friend ostream& operator<<(ostream& os,const _smb& it)
     {
         os << it.simb << ' ';
@@ -41,11 +35,7 @@ typedef struct _linha
     int nlinha;
     vector<string> tokens;
     _linha() {}
-    _linha(int _nlinha, vector<string> _tokens)
-    {
-        this-> nlinha = _nlinha;
-        this-> tokens = _tokens;
-    }
+    _linha(int _nlinha, vector<string> _tokens):nlinha(_nlinha),tokens(_tokens) { }
     friend ostream& operator<<(ostream& os, const _linha& it)
     {
         for(unsigned int i =0; i<it.tokens.size(); i++)
@@ -62,14 +52,10 @@ typedef struct _linha
 typedef vector<linha_t> code_t;
 typedef struct _define
 {
-    int value;
     string label;
+    int value;
     _define(){}
-    _define(string _label,int _value)
-    {
-        this->label = _label;
-        this->value = _value;
-    }
+    _define(string _label,int _value):label(_label),value(_value) { }
     friend bool operator==(_define& define1, _define& define2)
     {
         return (define1.label == define2.label);
@@ -86,12 +72,7 @@ typedef struct _erro
     string type;
     string reason;
     _erro(){}
-    _erro(int _nlinha,string _type,string _reason)
-    {
-        this->nlinha = _nlinha;
-        this->type = _type;
-        this->reason = _reason;
-    }
+    _erro(int _nlinha,string _type,string _reason):nlinha(_nlinha),type(_type),reason(_reason){ }
     friend ostream& operator<<(ostream& os,const _erro& it)
     {
         os << "erro : linha "<<it.nlinha << ", devido a " << it.type << ", pois " << it.reason;

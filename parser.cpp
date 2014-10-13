@@ -248,12 +248,6 @@ code_t PARSER::make_listaEQU(code_t _code)
                 //Sem erros
                 break;
             }
-//            unsigned int i=0;
-//            while(i<linha->tokens.size())
-//            {
-//                cout << linha->tokens[i];
-//                i++;
-//            }
             if(!erased)
                 linha++;
         }
@@ -283,11 +277,12 @@ code_t PARSER::passagiunics(code_t code)
     unsigned int tamanho_inc;
     code_t::iterator linha = _code.begin();
     unsigned int increment_add;
+    unsigned int counter,counter_operadores;
     while(linha!=_code.end())
     {
 	  //cout << linha->nlinha << ' ' << *linha << endl;
         vector<string>::iterator token = linha->tokens.begin();
-        while(token!=linha->tokens.end())
+        while(token!=linha->tokens.end() && counter<counter_operadores)
         {
             increment_add = 1; //Ao chegar num novo token o incremento do endereco eh sempre 1
             cout << PC << ' ' << *token << ' ';
