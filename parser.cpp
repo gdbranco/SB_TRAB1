@@ -19,14 +19,14 @@ string PARSER::retiraComentarios(string _linha)
     }
     return _linha;
 }
-code_t PARSER::toMEM(string nome)
+code_t PARSER::toMEM(string nome_arq)
 {
     code_t memoria;
     vector<string> _tokens;
     int _linha=0;
     fstream sc;
     char* pch;
-    sc.open(nome.c_str());
+    sc.open(nome_arq.c_str());
     string s;
     while(getline(sc,s))
     {
@@ -285,7 +285,7 @@ code_t PARSER::passagiunics(code_t code)
     unsigned int increment_add;
     while(linha!=_code.end())
     {
-//        cout << linha->nlinha << ' ' << *linha << endl;
+	  //cout << linha->nlinha << ' ' << *linha << endl;
         vector<string>::iterator token = linha->tokens.begin();
         while(token!=linha->tokens.end())
         {

@@ -20,7 +20,7 @@
 *.log
 *.pdf
 *.pre
-*.asm
+*.mcr
 
 #Pastas#
 ########

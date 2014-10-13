@@ -33,7 +33,7 @@ public:
     static int iscomment(const string _comment);
     static code_t run_preproc(code_t _code);
     static code_t run_montador(code_t code);
-    static code_t toMEM(const string nome);
+    static code_t toMEM(const string nome_arq);
     static string retiraComentarios(string _linha);
 };
 #endif // PARSER_H
