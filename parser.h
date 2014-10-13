@@ -35,6 +35,7 @@ public:
     static bool isinst(const string _inst,inst_t& inst);
     static int iscomment(const string _comment);
 	static bool isSymbol(string simb);
+	static bool isNumber(string simb);
     static code_t run_preproc(code_t _code);
     static code_t run_macros(code_t code);
     static code_t run_montador(code_t code);

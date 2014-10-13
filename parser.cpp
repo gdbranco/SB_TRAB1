@@ -338,12 +338,13 @@ code_t PARSER::passagiunics(code_t code)
 	vector<int> obj_code;
 	code_t::iterator linha = _code.begin();
 	unsigned int increment_add;
-	bool space_found,const_found;
+	bool space_found,const_found, is_soma;
 	//unsigned int counter,counter_operadores;
 	while(linha!=_code.end())
 	{
 		space_found = false;
 		const_found = false;
+		is_soma = false;
 		cout << PC << ' ';
 		//cout << linha->nlinha << ' ' << *linha << endl;
 		vector<string>::iterator token = linha->tokens.begin();
@@ -358,8 +359,38 @@ code_t PARSER::passagiunics(code_t code)
 Done: se label, se instruction, se diretiva
 TODO: tabela de simbolos
 			 **/
+			if ((*token) == "+")
+			{
+				if (token == linha->tokens.end())
+				{
+					//erro
+				} else {
+					is_soma = true;
+				}	
+				increment_add = 0; 
+			} else if (is_soma)
+			{
+				increment_add = 0;
+				if (isNumber(*token))
+				{
+					obj_code[obj_code.size() - 1] += atoi(token->c_str());
+				} else {
+					int i = symbol_exists(token->substr(0, (*token).size() - 1));
+					if (i > -1)
+					{
+						if(simb_list[i].def) {
+							obj_code[obj_code.size() - 1] += simb_list[i].value;
+						} else {
+							simb_list[i].def = true;
+							simb_list[i].value = PC;
+						}
+						
+					} else {
+						simb_list.push_back(smb_t((*token), PC, true));
+					}
 
-			if(islabel(*token))
+				}
+			} else 	if(islabel(*token))
 			{
 				increment_add = 0; //Se for uma label não aumenta o endereço
 				int i = symbol_exists(token->substr(0, (*token).size() - 1));
@@ -448,7 +479,7 @@ TODO: tabela de simbolos
 	{
 		for(unsigned int j=0;j<simb_list[i].lista_end.size();j++)
 		{
-			obj_code[simb_list[i].lista_end[j]] = simb_list[i].value;
+			obj_code[simb_list[i].lista_end[j]] += simb_list[i].value;
 		}
 	}
 	for(unsigned int i=0;i<obj_code.size();i++)
@@ -551,6 +582,19 @@ bool PARSER::isSymbol(string simb) {
 			{
 				return false;
 			}
+		}
+	}
+	return true;
+}
+
+bool PARSER::isNumber(string simb) {
+	string valid = "0987654321";
+	int i = 0;
+	for (i = 0; i < (int) simb.size(); ++i)
+	{
+		if (valid.find(simb[i]) == string::npos)
+		{
+			return false;
 		}
 	}
 	return true;
