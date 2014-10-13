@@ -25,15 +25,16 @@ private:
 	code_t passagem_macros(code_t _code);
     code_t passagiunics(code_t code);
     int define_exists(const define_t procura);
+	int symbol_exists(string procura);
 public:
     static tinst_t instruction_list; 
     static vector<erro_t> erros_list;
     /**Metodos**/
     static int islabel(const string _label);
     static int isdir(const string _dir);
-    static int isdir(const string _dir,unsigned int &tam_dir);
     static bool isinst(const string _inst,inst_t& inst);
     static int iscomment(const string _comment);
+	static bool isSymbol(string simb);
     static code_t run_preproc(code_t _code);
     static code_t run_macros(code_t code);
     static code_t run_montador(code_t code);

@@ -10,33 +10,37 @@ void handle_pass(std::string nome_arq, code_t &memoria, const string run_type, b
 
 int main(int argc,char **argv)
 {
-    code_t memoria;
-    string nome_base(argv[1]);
-    string run_type(argv[2]);
-    string nome_arq = nome_base+".asm";
-    memoria = PARSER::toMEM(nome_arq);
-    /**Roda as passagens apropriadas dependendo da flag passada
+	if(argc<3)
+	{
+		return -1;
+	}
+	code_t memoria;
+	string nome_base(argv[1]);
+	string run_type(argv[2]);
+	string nome_arq = nome_base+".asm";
+	memoria = PARSER::toMEM(nome_arq);
+	/**Roda as passagens apropriadas dependendo da flag passada
 	 * -p roda só pré-processamento, -m roda macros também, -o roda tudo**/
-    if(run_type==run_type::PRE_PROCESS_EQU)
-    {
+	if(run_type==run_type::PRE_PROCESS_EQU)
+	{
 		handle_pass(string(nome_base + ".pre"), memoria, run_type::PRE_PROCESS_EQU, true);
-    }
-    else if(run_type==run_type::PRE_PROCESS_MACRO)
-    {
+	}
+	else if(run_type==run_type::PRE_PROCESS_MACRO)
+	{
 		handle_pass(string(nome_base + ".pre"), memoria, run_type::PRE_PROCESS_EQU, false);
 		handle_pass(string(nome_base + ".mcr"), memoria, run_type::PRE_PROCESS_MACRO, true);
-    }
-    else if(run_type==run_type::COMPILE)
-    {
+	}
+	else if(run_type==run_type::COMPILE)
+	{
 		handle_pass(string(nome_base + ".pre"), memoria, run_type::PRE_PROCESS_EQU, false);
 		handle_pass(string(nome_base + ".mcr"), memoria, run_type::PRE_PROCESS_MACRO, false);
 		handle_pass(string(nome_base + ".o"), memoria, run_type::COMPILE, true);
-    }
-    else
-    {
-        cout << "Run type nao definido" << endl;
-    }
-    return 0;
+	}
+	else
+	{
+		cout << "Run type nao definido" << endl;
+	}
+	return 0;
 }
 
 void handle_pass(std::string nome_arq, code_t &memoria, const string run_type, bool log) {
@@ -50,8 +54,8 @@ void handle_pass(std::string nome_arq, code_t &memoria, const string run_type, b
 	} else {
 		memoriaLOCAL = PARSER::run_montador(memoria);
 	}
-		
-	
+
+
 	ofstream myarq;
 
 	/*Loga os erros e imprime o arquivo*/
@@ -86,5 +90,4 @@ void handle_pass(std::string nome_arq, code_t &memoria, const string run_type, b
 
 	/*Seta a memoria passada para a memória local*/
 	memoria = memoriaLOCAL;
-
 }

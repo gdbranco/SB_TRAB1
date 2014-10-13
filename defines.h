@@ -14,6 +14,8 @@ typedef struct _smb
     _smb(){}
     _smb(const string _simb, const int _value,const bool _def,const vector<int> _lista_end):
 	    simb(_simb),value(_value),def(_def),lista_end(_lista_end) {}
+    _smb(const string _simb, const int _value,const bool _def):
+	    simb(_simb),value(_value),def(_def) {}
     friend ostream& operator<<(ostream& os,const _smb& it)
     {
         os << it.simb << ' ';
@@ -22,9 +24,9 @@ typedef struct _smb
         for(unsigned int i=0;i<it.lista_end.size();i++)
         {
             os << it.lista_end[i];
-            if(i!=it.lista_end.size())
+            if(i!=it.lista_end.size()-1)
             {
-                os << ' ';
+                os << "->";
             }
         }
         return os;

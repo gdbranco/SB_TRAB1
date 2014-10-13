@@ -17,5 +17,7 @@ parser.o: parser.h
 	g++ $(CFLAGS) parser.cpp 
 
 clean:
+	rm -f *.pre
+	rm -f *.mcr
 	rm -f *.o
 	rm -f *.out
