@@ -49,7 +49,29 @@ int main(int argc,char **argv)
     }
     else if(run_type==run_type::PRE_PROCESS_MACRO)
     {
+        code_t memoriaMACRO = PARSER::run_macros(memoria);
+        if(!memoriaMACRO.empty() && PARSER::erros_list.empty()) {
+            for(unsigned int i=0; i<memoriaMACRO.size(); i++)
+            {
+                //cout << memoriaEQU[i].nlinha << ' ';
+                //myarq << memoriaEQU[i];
+				cout << memoriaMACRO[i];
+                if(i!=memoriaMACRO.size()-1)
+                {
+                    //myarq << endl;
+					cout << endl;
+                }
+            }
 
+		}
+		else
+        {
+            cout << "---ERROS---" << endl;
+            for(unsigned int i=0; i<PARSER::erros_list.size(); i++)
+            {
+                cout << PARSER::erros_list[i] << endl;
+            }
+        }
     }
     else if(run_type==run_type::COMPILE)
     {

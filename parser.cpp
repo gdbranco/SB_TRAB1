@@ -270,12 +270,10 @@ code_t PARSER::run_preproc(code_t code)
     return code;
 }
 
-/*Remover definições de macros!*/
 code_t PARSER::passagem_macros(code_t _code) {
 	code_t::iterator it;
 	code_t::iterator m_beg, m_end;
 	code_t macro_result;
-	vector<Erro> erros_list;
 	code_t code(_code); 
 	MacroTable mct;
 

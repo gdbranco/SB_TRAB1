@@ -7,12 +7,12 @@
 
 
 /* Cria a macro em uma linha referenciada pelo iterator code_it 
- * e guarda na tabela interna do objeto.*/
-code_t::iterator  MacroTable::create_macro(code_t::iterator &it, code_t _code,
+ * e guarda na tabela interna do objeto.
+ * Retorna o iterador para o final da macro. */
+code_t::iterator MacroTable::create_macro(code_t::iterator &it, code_t &code,
 											std::vector<erro_t> &erros_list) {
 	std::string name;
 	std::vector<Linha> macro_body;
-	code_t code(_code);
 	bool success = false;
 	std::vector<Linha> macro_result;
 	Macro new_macro;

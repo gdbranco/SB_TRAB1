@@ -1,4 +1,4 @@
-MACRO
+ MACRO
 	add	ONE
 	sub	TWO
 	END

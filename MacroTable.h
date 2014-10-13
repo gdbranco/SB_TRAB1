@@ -12,7 +12,7 @@ private:
 
 public:
 	MacroTable() {}
-	code_t::iterator  create_macro(code_t::iterator &code_it, code_t _code, std::vector<erro_t> &erros_list);
+	code_t::iterator create_macro(code_t::iterator &code_it, code_t &code, std::vector<erro_t> &erros_list);
 	std::vector<Linha> get_macro(code_t::iterator it);
 	bool has(std::string name);
 
