@@ -19,6 +19,11 @@ int main(int argc,char **argv)
 	string run_type(argv[2]);
 	string nome_arq = nome_base+".asm";
 	memoria = PARSER::toMEM(nome_arq);
+	//for(unsigned int i=0;i<memoria.size();i++)
+	//{
+		//cout << memoria[i] << endl;
+	//}
+	//cin.get();
 	/**Roda as passagens apropriadas dependendo da flag passada
 	 * -p roda só pré-processamento, -m roda macros também, -o roda tudo**/
 	if(run_type==run_type::PRE_PROCESS_EQU)

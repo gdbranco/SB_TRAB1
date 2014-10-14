@@ -58,6 +58,7 @@ code_t PARSER::toMEM(string nome_arq)
 			pch = strtok((char*)s.c_str(),"\t ");
 			while(pch!=NULL)
 			{
+				transform(pch,pch+strlen(pch),pch,static_cast<int(*)(int)>(toupper));
 				_tokens.push_back(string(pch));
 				//                cout << pch << endl;
 				pch = strtok(NULL,"\t ");
@@ -158,6 +159,29 @@ code_t PARSER::preproc(code_t _code)
 				if(erase_currentline)
 				{
 					code.erase(linha);
+				}
+			}
+			/**Tenta substituir caso um define seja achado fora de um IF**/
+			else
+			{
+				define = defines_list.begin();
+				while(define!=defines_list.end())
+				{
+					if(find(linha->tokens.begin(),linha->tokens.end(),define->label)!=linha->tokens.end())
+					{
+						token = linha->tokens.begin();
+						while(token!=linha->tokens.end())
+						{
+							if(*token == define->label.substr(0,define->label.length()-1))
+							{
+								stringstream ss;
+								ss << define->value;
+								*token = ss.str();
+							}
+							token++;
+						}
+					}
+					define++;
 				}
 			}
 			//cout<< *linha<<endl;
@@ -356,8 +380,8 @@ code_t PARSER::passagiunics(code_t code)
 			//cout << PC << ' ' << *token << ' ';
 			/**
 			  Logica para tratar token a token
-Done: se label, se instruction, se diretiva
-TODO: tabela de simbolos
+Done: se label, se instruction, se diretiva, tabela de simbolos, codigo objeto
+TODO: erros e soma de indices
 			 **/
 			if ((*token) == "+")
 			{
