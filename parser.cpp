@@ -167,7 +167,7 @@ code_t PARSER::preproc(code_t _code)
 				define = defines_list.begin();
 				while(define!=defines_list.end())
 				{
-					if(find(linha->tokens.begin(),linha->tokens.end(),define->label)!=linha->tokens.end())
+					if(find(linha->tokens.begin(),linha->tokens.end(),define->label.substr(0,define->label.length()-1))!=linha->tokens.end())
 					{
 						token = linha->tokens.begin();
 						while(token!=linha->tokens.end())

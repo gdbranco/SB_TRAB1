@@ -62,6 +62,11 @@ void handle_pass(std::string nome_arq, code_t &memoria, const string run_type, b
 
 
 	ofstream myarq;
+	unsigned found = nome_arq.find_last_of("/\\");
+	if(found)
+	{
+		nome_arq = nome_arq.substr(found+1);
+	}
 
 	/*Loga os erros e imprime o arquivo*/
 	if (log) {
