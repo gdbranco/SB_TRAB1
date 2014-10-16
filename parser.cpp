@@ -392,43 +392,57 @@ TODO: erros e soma de indices
 					is_soma = true;
 				}	
 				increment_add = 0; 
-			} else if (is_soma)
+			}
+		   	else if (is_soma)
 			{
 				increment_add = 0;
 				if (isNumber(*token))
 				{
 					obj_code[obj_code.size() - 1] += atoi(token->c_str());
-				} else {
+				} 
+				else 
+				{
 					int i = symbol_exists(token->substr(0, (*token).size() - 1));
 					if (i > -1)
 					{
-						if(simb_list[i].def) {
+						if(simb_list[i].def) 
+						{
 							obj_code[obj_code.size() - 1] += simb_list[i].value;
-						} else {
+						} 
+						else 
+						{
 							simb_list[i].def = true;
 							simb_list[i].value = PC;
 						}
 						
-					} else {
+					} 
+					else 
+					{
 						simb_list.push_back(smb_t((*token), PC, true));
 					}
 
 				}
-			} else 	if(islabel(*token))
+			} 
+			else if(islabel(*token))
 			{
 				increment_add = 0; //Se for uma label não aumenta o endereço
-				int i = symbol_exists(token->substr(0, (*token).size() - 1));
+				int i = symbol_exists(token->substr(0, token->length() - 1));
 				if (i > -1)
 				{
-					if(simb_list[i].def) {
+					if(simb_list[i].def) 
+					{
 						//erro
-					} else {
+					}
+				   	else 
+					{
 						simb_list[i].def = true;
 						simb_list[i].value = PC;
 					}
 					
-				} else {
-					simb_list.push_back(smb_t((*token), PC, true));
+				} 
+				else 
+				{
+					simb_list.push_back(smb_t(token->substr(0,token->length()-1), PC, true));
 				}
 			}
 			else if(isinst(*token,rinst)) /**Refazer para melhorar a estrutura de instrucoes e diretivas**/
@@ -453,18 +467,24 @@ TODO: erros e soma de indices
 					const_found = true;
 				}
 			}
-			else if(isSymbol(*token)) {
+			else if(isSymbol(*token)) 
+			{
 				int i = symbol_exists(*token);
 				if (i > -1)
 				{
-					if(simb_list[i].def) {
-						//nada
-					} else {
+					if(simb_list[i].def) 
+					{
+						obj_code.push_back(simb_list[i].value);
+					} 
+					else 
+					{
 						simb_list[i].lista_end.push_back(PC);
 						obj_code.push_back(0);
 					}
 					
-				} else {
+				} 
+				else 
+				{
 					std::vector<int> index_list;
 					index_list.push_back(PC);
 					simb_list.push_back(smb_t((*token), 0, false, index_list));
@@ -498,7 +518,9 @@ TODO: erros e soma de indices
 	for (int i = 0; i < (int) simb_list.size(); ++i)
 	{
 		cout << simb_list[i] << endl;	
+		cin.get();
 	}
+	//Troca os enderecos da lista pelo seu valor;
 	for(unsigned int i=0;i<simb_list.size();i++)
 	{
 		for(unsigned int j=0;j<simb_list[i].lista_end.size();j++)
@@ -506,6 +528,7 @@ TODO: erros e soma de indices
 			obj_code[simb_list[i].lista_end[j]] += simb_list[i].value;
 		}
 	}
+	//Mostra o codigo obj
 	for(unsigned int i=0;i<obj_code.size();i++)
 	{
 		cout << obj_code[i];
