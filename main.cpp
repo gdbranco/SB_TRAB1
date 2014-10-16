@@ -15,8 +15,8 @@ int main(int argc,char **argv)
 		return -1;
 	}
 	code_t memoria;
-	string nome_base(argv[1]);
-	string run_type(argv[2]);
+	string run_type(argv[1]);
+	string nome_base(argv[2]);
 	string nome_arq = nome_base+".asm";
 	memoria = PARSER::toMEM(nome_arq);
 	//for(unsigned int i=0;i<memoria.size();i++)

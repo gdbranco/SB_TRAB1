@@ -358,9 +358,13 @@ code_t PARSER::passagem_macros(code_t _code) {
 code_t PARSER::passagiunics(code_t code)
 {
 	unsigned int PC=0;
+	int sinal;
 	code_t _code = code;
 	vector<int> obj_code;
+	tsum_t sum_list;
 	code_t::iterator linha = _code.begin();
+	tsmb_t::iterator last_symbol;
+	std::vector<string>::iterator cp_iter;
 	unsigned int increment_add;
 	bool space_found,const_found, is_soma;
 	//unsigned int counter,counter_operadores;
@@ -369,6 +373,20 @@ code_t PARSER::passagiunics(code_t code)
 		space_found = false;
 		const_found = false;
 		is_soma = false;
+
+		/*Lógica para o COPY funcionar com vírgula*/
+		cp_iter = find(linha->tokens.begin(), linha->tokens.end(), "COPY");
+		if( cp_iter != linha->tokens.end()) {
+			cp_iter++;
+			if(cp_iter->find_last_of(',') + cp_iter->begin() == cp_iter->end() -1) {
+				*cp_iter=cp_iter->substr(0, cp_iter->length()-1);
+			} else {
+				cout << endl << "FDP" << endl;
+				//erro	
+			}
+			
+		}
+		sinal = 1;
 		cout << PC << ' ';
 		//cout << linha->nlinha << ' ' << *linha << endl;
 		vector<string>::iterator token = linha->tokens.begin();
@@ -378,18 +396,28 @@ code_t PARSER::passagiunics(code_t code)
 			increment_add = 1; //Ao chegar num novo token o incremento do endereco eh sempre 1
 			cout << *token << ' ';
 			//cout << PC << ' ' << *token << ' ';
+
 			/**
-			  Logica para tratar token a token
-Done: se label, se instruction, se diretiva, tabela de simbolos, codigo objeto
-TODO: erros e soma de indices
-			 **/
+			Logica para tratar token a token
+			Done: se label, se instruction, se diretiva, tabela de simbolos, codigo objeto
+			TODO: erros e soma de indices **/
+
 			if ((*token) == "+")
 			{
-				if (token == linha->tokens.end())
-				{
+				if (token == linha->tokens.end()) {
 					//erro
 				} else {
 					is_soma = true;
+				}	
+				increment_add = 0; 
+			} 
+			else if ((*token) == "-")
+			{
+				if (token == linha->tokens.end()) {
+					//erro
+				} else {
+					is_soma = true;
+					sinal = -1;
 				}	
 				increment_add = 0; 
 			}
@@ -398,7 +426,7 @@ TODO: erros e soma de indices
 				increment_add = 0;
 				if (isNumber(*token))
 				{
-					obj_code[obj_code.size() - 1] += atoi(token->c_str());
+					obj_code[obj_code.size() - 1] += (sinal)*atoi(token->c_str());
 				} 
 				else 
 				{
@@ -407,18 +435,20 @@ TODO: erros e soma de indices
 					{
 						if(simb_list[i].def) 
 						{
-							obj_code[obj_code.size() - 1] += simb_list[i].value;
+							if(simb_list[i].is_const) {
+								obj_code[obj_code.size() - 1] += (sinal)*simb_list[i].value;
+							}
 						} 
 						else 
 						{
-							simb_list[i].def = true;
-							simb_list[i].value = PC;
+							sum_list.push_back(sum_t(*token, sinal, PC -1));
 						}
 						
 					} 
 					else 
 					{
-						simb_list.push_back(smb_t((*token), PC, true));
+						sum_list.push_back(sum_t(*token, sinal, PC - 1));
+						simb_list.push_back(smb_t((*token), -1, false));
 					}
 
 				}
@@ -437,18 +467,20 @@ TODO: erros e soma de indices
 					{
 						simb_list[i].def = true;
 						simb_list[i].value = PC;
+						last_symbol = simb_list.begin() + i;
 					}
 					
 				} 
 				else 
 				{
 					simb_list.push_back(smb_t(token->substr(0,token->length()-1), PC, true));
+					last_symbol = simb_list.end() - 1;
 				}
 			}
 			else if(isinst(*token,rinst)) /**Refazer para melhorar a estrutura de instrucoes e diretivas**/
 			{
 				//cout << "\nAchei inst : "<< *token << endl;
-				increment_add = rinst.qtd_operandos;
+				increment_add = 1;
 				obj_code.push_back(rinst.inst_hex);
 			}
 			else if(isdir(*token))
@@ -465,6 +497,9 @@ TODO: erros e soma de indices
 				else if(*token == diretivas::CONST)
 				{
 					const_found = true;
+					if(simb_list.size() > 0) {
+						last_symbol->is_const = true;
+					}
 				}
 			}
 			else if(isSymbol(*token)) 
@@ -518,16 +553,32 @@ TODO: erros e soma de indices
 	for (int i = 0; i < (int) simb_list.size(); ++i)
 	{
 		cout << simb_list[i] << endl;	
-		cin.get();
 	}
 	//Troca os enderecos da lista pelo seu valor;
 	for(unsigned int i=0;i<simb_list.size();i++)
 	{
 		for(unsigned int j=0;j<simb_list[i].lista_end.size();j++)
 		{
-			obj_code[simb_list[i].lista_end[j]] += simb_list[i].value;
+			if(simb_list[i].value  != -1) {
+				obj_code[simb_list[i].lista_end[j]] += simb_list[i].value;
+			}
 		}
 	}
+
+	//Soma os consts nos endereços que precisam
+	for(unsigned int i=0;i<sum_list.size();i++)
+	{
+		int ok = 0;
+		/*Acha a posição do CONST na lista*/
+		ok = symbol_exists(sum_list[i].simb);
+		/*Se achou*/
+		if(ok > -1) {
+			/*O valor do símbolo é a posição na memória. Busca o valor desta posição*/
+			int valor_const = obj_code[( ok + simb_list.begin())->value];
+			obj_code[sum_list[i].position] += sum_list[i].signal*valor_const;
+		}
+	}
+
 	//Mostra o codigo obj
 	for(unsigned int i=0;i<obj_code.size();i++)
 	{

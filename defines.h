@@ -10,17 +10,19 @@ typedef struct _smb
     string simb;
     int value;
     bool def;
+	bool is_const;
     vector<int> lista_end;
     _smb(){}
     _smb(const string _simb, const int _value,const bool _def,const vector<int> _lista_end):
-	    simb(_simb),value(_value),def(_def),lista_end(_lista_end) {}
+	    simb(_simb),value(_value),def(_def),is_const(false),lista_end(_lista_end) {}
     _smb(const string _simb, const int _value,const bool _def):
-	    simb(_simb),value(_value),def(_def) {}
+	    simb(_simb),value(_value),def(_def), is_const(false) {}
     friend ostream& operator<<(ostream& os,const _smb& it)
     {
         os << it.simb << ' ';
         os << it.value << ' ';
         os << it.def   << ' ';
+        os << it.is_const  << ' ';
         for(unsigned int i=0;i<it.lista_end.size();i++)
         {
             os << it.lista_end[i];
@@ -33,6 +35,24 @@ typedef struct _smb
     }
 }smb_t;
 typedef vector<smb_t> tsmb_t;
+
+typedef struct sum_t
+{
+    string simb;
+	int signal;
+    int position;
+    sum_t(){}
+    sum_t(const string _simb, int _signal, const int _position):
+	    simb(_simb),signal(_signal),position(_position) {}
+    friend ostream& operator<<(ostream& os,const sum_t& it)
+    {
+        os << it.simb << ' ';
+        os << it.position << ' ';
+        return os;
+    }
+}sum_t;
+typedef vector<sum_t> tsum_t;
+
 typedef struct _inst
 {
 	string inst_name;
