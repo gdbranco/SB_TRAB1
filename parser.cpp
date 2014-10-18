@@ -20,7 +20,6 @@ string PARSER::retiraComentarios(string _linha)
 	}
 	return _linha;
 }
-
 void PARSER::inicializa_paradas()
 {
 	instruction_list.push_back(instructions::ADD);
