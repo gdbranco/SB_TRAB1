@@ -362,19 +362,33 @@ code_t PARSER::passagem_macros(code_t _code)
 }
 
 /**Metodo montador**/
+/**TODO: Erros
+  **	Declaração ausente
+  **	Declaração repetida
+  *	Pulo para rótulo inválido
+  *	Diretiva inválida
+  *	Instrução inválida
+  *	Diretiva ou instrução na sessão errada
+  *	Divisão por zero
+  *	Rótulo duplo na mesma linha
+  *	Seção faltante
+  *	Tipo de argumento inválido
+  *	Endereço de memória não reservado
+  *	Modificado const**/
 code_t PARSER::passagiunics(code_t code)
 {
     unsigned int PC=0;
     int sinal;
     code_t _code = code;
     vector<int> obj_code;
+	vector<int> mod_const; //Array de posições em que um const é modificado
     tsum_t sum_list;
     code_t::iterator linha = _code.begin();
     tsmb_t::iterator last_symbol;
     std::vector<string>::iterator cp_iter;
     unsigned int increment_add;
     bool space_found,const_found, is_soma, has_label;
-    //unsigned int counter,counter_operadores;
+
     while(linha!=_code.end())
     {
         space_found = false;
@@ -393,8 +407,7 @@ code_t PARSER::passagiunics(code_t code)
             }
             else
             {
-                cout << endl << "FDP" << endl;
-                //erro
+				erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::COMP_COPY_VIRGULA)); 
             }
 
         }
@@ -407,18 +420,18 @@ code_t PARSER::passagiunics(code_t code)
             inst_t rinst;
             increment_add = 1; //Ao chegar num novo token o incremento do endereco eh sempre 1
             cout << *token << ' ';
-            //cout << PC << ' ' << *token << ' ';
 
             /**
             Logica para tratar token a token
             Done: se label, se instruction, se diretiva, tabela de simbolos, codigo objeto
             TODO: erros **/
 
+			/*Confere se tem soma ou subtração*/
             if ((*token) == "+")
             {
                 if (token == linha->tokens.end())
                 {
-                    //erro
+                    erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::COMP_EXPR_INCORRETA)); 
                 }
                 else
                 {
@@ -430,7 +443,7 @@ code_t PARSER::passagiunics(code_t code)
             {
                 if (token == linha->tokens.end())
                 {
-                    //erro
+                    erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::COMP_EXPR_INCORRETA)); 
                 }
                 else
                 {
@@ -442,13 +455,16 @@ code_t PARSER::passagiunics(code_t code)
             else if (is_soma)
             {
                 increment_add = 0;
+				/*Se é numero direto, soma*/
                 if (isNumber(*token))
                 {
                     obj_code[obj_code.size() - 1] += (sinal)*atoi(token->c_str());
                 }
+				/*Se não, confere se está definido*/
                 else
                 {
                     int i = symbol_exists(token->substr(0, (*token).size() - 1));
+					/*Se não está, adiciona na lista de somas para ser adicionado depois*/
                     if (i > -1)
                     {
                         if(simb_list[i].def)
@@ -480,7 +496,7 @@ code_t PARSER::passagiunics(code_t code)
                 {
                     if(simb_list[i].def)
                     {
-                        //erro
+						erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::label_redefinida)); 
                     }
                     else
                     {
@@ -499,6 +515,7 @@ code_t PARSER::passagiunics(code_t code)
             }
             else if(isinst(*token,rinst)) /**Refazer para melhorar a estrutura de instrucoes e diretivas**/
             {
+				/*Confere a quantidade de argumentos*/
 				unsigned int line_size = linha->tokens.size();
 				if(find(linha->tokens.begin(), linha->tokens.end(), "+") != linha->tokens.end()) {
 					line_size -= 2;
@@ -508,14 +525,15 @@ code_t PARSER::passagiunics(code_t code)
 				}
 				if(has_label) {
 					if (line_size != rinst.qtd_operandos + 2) {
-						//erro
+						erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::COMP_QTD_OPERANDOS_INV)); 
 					} 
 				} else {
 					if (line_size != rinst.qtd_operandos + 1) {
-						//erro
+						erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::COMP_QTD_OPERANDOS_INV)); 
 					}
 				}
                 increment_add = 1;
+				/*Guarda na lista de código objeto*/
                 obj_code.push_back(rinst.inst_hex);
             }
             else if(isdir(*token))
