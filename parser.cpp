@@ -373,13 +373,14 @@ code_t PARSER::passagiunics(code_t code)
     tsmb_t::iterator last_symbol;
     std::vector<string>::iterator cp_iter;
     unsigned int increment_add;
-    bool space_found,const_found, is_soma;
+    bool space_found,const_found, is_soma, has_label;
     //unsigned int counter,counter_operadores;
     while(linha!=_code.end())
     {
         space_found = false;
         const_found = false;
         is_soma = false;
+		has_label = false;
 
         /*Lógica para o COPY funcionar com vírgula*/
         cp_iter = find(linha->tokens.begin(), linha->tokens.end(), "COPY");
@@ -411,7 +412,7 @@ code_t PARSER::passagiunics(code_t code)
             /**
             Logica para tratar token a token
             Done: se label, se instruction, se diretiva, tabela de simbolos, codigo objeto
-            TODO: erros e soma de indices **/
+            TODO: erros **/
 
             if ((*token) == "+")
             {
@@ -494,20 +495,34 @@ code_t PARSER::passagiunics(code_t code)
                     simb_list.push_back(smb_t(token->substr(0,token->length()-1), PC, true));
                     last_symbol = simb_list.end() - 1;
                 }
+				has_label = true;
             }
             else if(isinst(*token,rinst)) /**Refazer para melhorar a estrutura de instrucoes e diretivas**/
             {
-                //cout << "\nAchei inst : "<< *token << endl;
+				unsigned int line_size = linha->tokens.size();
+				if(find(linha->tokens.begin(), linha->tokens.end(), "+") != linha->tokens.end()) {
+					line_size -= 2;
+				}
+				if(find(linha->tokens.begin(), linha->tokens.end(), "-") != linha->tokens.end()) {
+					line_size -= 2;
+				}
+				if(has_label) {
+					if (line_size != rinst.qtd_operandos + 2) {
+						//erro
+					} 
+				} else {
+					if (line_size != rinst.qtd_operandos + 1) {
+						//erro
+					}
+				}
                 increment_add = 1;
                 obj_code.push_back(rinst.inst_hex);
             }
             else if(isdir(*token))
             {
                 increment_add=0;
-                //cout << "Achei dir : " << *token;
                 if(*token == diretivas::SPACE)
                 {
-                    //cout << "Achei space";
                     space_found = true;
                     increment_add=1;
                     obj_code.push_back(0);
