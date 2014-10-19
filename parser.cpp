@@ -574,7 +574,7 @@ code_t PARSER::passagiunics(code_t code)
                 {
                     std::vector<int> index_list;
                     index_list.push_back(PC);
-                    simb_list.push_back(smb_t((*token), 0, false, index_list));
+                    simb_list.push_back(smb_t((*token), -1, false, index_list));
                     obj_code.push_back(0);
                 }
 
@@ -606,17 +606,27 @@ code_t PARSER::passagiunics(code_t code)
     {
         cout << simb_list[i] << endl;
     }
-    //Troca os enderecos da lista pelo seu valor;
+
+	/* Adiciona os valores das labels definidas atrasado nos locais corretos de memória. */
     for(unsigned int i=0; i<simb_list.size(); i++)
     {
-        for(unsigned int j=0; j<simb_list[i].lista_end.size(); j++)
+		for(unsigned int j=0; j < simb_list[i].lista_end.size(); j++)
         {
             if(simb_list[i].value  != -1)
             {
                 obj_code[simb_list[i].lista_end[j]] += simb_list[i].value;
-            }
+			}
         }
     }
+
+	/* Grava os erros caso as labels terminem sem serem definidas*/
+    for(unsigned int i=0; i<simb_list.size(); i++) {
+		if(simb_list[i].value < 1) {
+			for (unsigned int j = 0; j < simb_list[i].lista_end.size(); j++) {
+				erros_list.push_back(erro_t(simb_list[i].lista_end[j],erros::SEMANTICO,erros::label_nao_def)); 
+			}
+		}
+	}
 
     //Soma os consts nos endereços que precisam
     for(unsigned int i=0; i<sum_list.size(); i++)

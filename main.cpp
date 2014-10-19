@@ -96,7 +96,7 @@ void handle_pass(std::string nome_arq, code_t &memoria, const string run_type, b
         }
         else
         {
-            cout << "---ERROS---" << endl;
+            cout << endl << "---ERROS---" << endl;
             for(unsigned int i=0; i<PARSER::erros_list.size(); i++)
             {
                 cout << PARSER::erros_list[i] << endl;

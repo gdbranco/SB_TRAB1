@@ -12,6 +12,7 @@ namespace erros
     string LEXICO                   = "ERRO LEXICO";
     string label_redefinida         = "Redefinicao de label";
     string label_dupla              = "Duas labels na mesma linha";
+    string label_nao_def            = "Label não definida";
     string EQU_nlabeled             = "EQU sem label";
     string EQU_ndefinida            = "EQU nao definido";
     string MACRO_no_label           = "Macro não pode ser definida sem label";

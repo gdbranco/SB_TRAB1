@@ -143,6 +143,7 @@ extern string SEMANTICO;
 extern string LEXICO;
 extern string label_redefinida;
 extern string label_dupla;
+extern string label_nao_def;
 extern string EQU_nlabeled;
 extern string EQU_ndefinida;
 extern string MACRO_no_label;
