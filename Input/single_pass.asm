@@ -1,6 +1,6 @@
 SECTION TEXT
-Loko: JMP H
-DIV Loko 
+;Loko: JMP H
+;DIV Loko 
 INPUT B
 COPY DOIS, B
 INPUT H
