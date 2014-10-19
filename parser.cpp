@@ -402,8 +402,7 @@ vector<int> PARSER::passagiunics(code_t code)
 		last_inst_mem_changer = false;
 		last_inst_div = false;
 
-        /*Lógica para o COPY funcionar com vírgula
-		 * (Apenas segundo argumento) */
+        /*Lógica para o COPY funcionar com vírgula */
         cp_iter = find(linha->tokens.begin(), linha->tokens.end(), "COPY");
         if( cp_iter != linha->tokens.end())
         {
