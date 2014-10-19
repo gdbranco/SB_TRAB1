@@ -657,6 +657,7 @@ vector<int> PARSER::passagiunics(code_t code)
 					} else {
 						section_text = false;	
 						erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::SECAO_INVALIDA)); 
+						/*goto para terminar o montador caso seção não definida seja encontrada*/
 						goto end_pass;
 					}
 				}
