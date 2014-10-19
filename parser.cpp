@@ -63,8 +63,8 @@ code_t PARSER::toMEM(string nome_arq)
                 pch = strtok(NULL,"\t ");
             }
             memoria.push_back(linha_t(_linha,_tokens));
-        }
-        _tokens.clear();
+        } 
+		_tokens.clear();
     }
     sc.close();
     return memoria;
