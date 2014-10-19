@@ -12,9 +12,12 @@ typedef struct _smb
     bool def;
     bool is_const;
     vector<int> lista_end;
+	vector<bool> lista_mem_changer;
+	vector<bool> div_list;
+	vector<int> lista_nlinha;
     _smb() {}
-    _smb(const string _simb, const int _value,const bool _def,const vector<int> _lista_end):
-        simb(_simb),value(_value),def(_def),is_const(false),lista_end(_lista_end) {}
+    _smb(const string _simb, const int _value,const bool _def,const vector<int> _lista_end,const vector<bool> _lista_mem_changer,const vector<bool> _div_list,const vector<int> _lista_nlinha):
+        simb(_simb),value(_value),def(_def),is_const(false),lista_end(_lista_end),lista_mem_changer(_lista_mem_changer),div_list(_div_list),lista_nlinha(_lista_nlinha) {}
     _smb(const string _simb, const int _value,const bool _def):
         simb(_simb),value(_value),def(_def), is_const(false) {}
     friend ostream& operator<<(ostream& os,const _smb& it)
@@ -62,6 +65,13 @@ typedef struct _inst
     _inst() {}
     _inst(const string _inst_name,const unsigned int _inst_hex,unsigned int _tam_inst,unsigned int _qtd_operandos):
         inst_name(_inst_name),inst_hex(_inst_hex),tam_inst(_tam_inst),qtd_operandos(_qtd_operandos) {}
+    friend bool operator==(_inst& inst1, _inst& inst2)
+    {
+        return (inst1.inst_name == inst2.inst_name &&
+				inst1.inst_hex == inst2.inst_hex &&
+				inst1.tam_inst == inst2.tam_inst &&
+				inst1.qtd_operandos == inst2.qtd_operandos);
+    }
     friend ostream& operator<<(ostream& os,const _inst& it)
     {
         os << it.inst_name << ' ' << it.inst_hex << ' ' << it.tam_inst << ' ' << it.qtd_operandos;
@@ -158,6 +168,8 @@ extern string COMP_INST_NAO_DEF;
 extern string COMP_DIR_NAO_DEF;
 extern string COMP_ARG_INV;
 extern string SECAO_FALTANTE;
+extern string mod_const;
+extern string div_zero;
 }
 namespace sections
 {

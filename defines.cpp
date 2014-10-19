@@ -27,6 +27,8 @@ namespace erros
 	string COMP_DIR_NAO_DEF	    	= "Diretiva não definida";
 	string COMP_ARG_INV		    	= "Argumento inválido";
 	string SECAO_FALTANTE	    	= "Seção faltante";
+	string mod_const                = "Nao se pode modificar uma constante";
+	string div_zero					= "Divisao por zero";
 }
 namespace instructions
 {
