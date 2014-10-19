@@ -7,31 +7,31 @@ namespace run_type
 }
 namespace erros
 {
-    string SINTATICO                = "ERRO SINTATICO";
-    string SEMANTICO                = "ERRO SEMANTICO";
-    string LEXICO                   = "ERRO LEXICO";
-    string label_redefinida         = "Redefinicao de label";
-    string label_dupla              = "Duas labels na mesma linha";
-    string label_nao_def            = "Label não definida";
-    string EQU_nlabeled             = "EQU sem label";
-    string EQU_ndefinida            = "EQU nao definido";
-    string MACRO_no_label           = "Macro não pode ser definida sem label";
-    string MACRO_label_no_delimiter = "Label da macro precisa terminar em ':'";
-    string MACRO_endless            = "Macro sem delimitação final";
-    string COMP_COPY_VIRGULA        = "Copy sem vírgula";
-    string COMP_EXPR_INCORRETA      = "Expressão (soma/subtração) malformada";
-	string COMP_QTD_OPERANDOS_INV	= "Quantidade de operandos inválida";
-	string COMP_INST_SECAO_ERRADA   = "Instrução na seção de dados";
-	string COMP_DIR_SECAO_ERRADA    = "Diretiva na seção de dados";
-	string COMP_INST_NAO_DEF	    = "Instrução não definida";
-	string COMP_DIR_NAO_DEF	    	= "Diretiva não definida";
-	string COMP_ARG_INV		    	= "Argumento inválido";
-	string COMP_JMP_ERRADO		    = "Jump para secao de dados";
-	string COMP_FUDEU_BURACO_ERRADO = "Acessando memoria em local indevido";
-	string SECAO_FALTANTE	    	= "Seção faltante";
-	string SECAO_INVALIDA	    	= "Seção inválida";
-	string mod_const                = "Nao se pode modificar uma constante";
-	string div_zero					= "Divisao por zero";
+    string SINTATICO                    = "ERRO SINTATICO";
+    string SEMANTICO                    = "ERRO SEMANTICO";
+    string LEXICO                       = "ERRO LEXICO";
+    string label_redefinida             = "Redefinicao de label";
+    string label_dupla                  = "Duas labels na mesma linha";
+    string label_nao_def                = "Label não definida";
+    string EQU_nlabeled                 = "EQU sem label";
+    string EQU_ndefinida                = "EQU nao definido";
+    string MACRO_no_label               = "Macro não pode ser definida sem label";
+    string MACRO_label_no_delimiter     = "Label da macro precisa terminar em ':'";
+    string MACRO_endless                = "Macro sem delimitação final";
+    string COMP_COPY_VIRGULA            = "Copy sem vírgula";
+    string COMP_EXPR_INCORRETA          = "Expressão (soma/subtração) malformada";
+	string COMP_QTD_OPERANDOS_INV       = "Quantidade de operandos inválida";
+	string COMP_INST_SECAO_ERRADA       = "Instrução na seção de dados";
+	string COMP_DIR_SECAO_ERRADA        = "Diretiva na seção de dados";
+	string COMP_INST_NAO_DEF            = "Instrução não definida";
+	string COMP_DIR_NAO_DEF             = "Diretiva não definida";
+	string COMP_ARG_INV                 = "Argumento inválido";
+	string COMP_JMP_ERRADO              = "Jump para secao de dados";
+	string COMP_ACESSO_MEMORIA_INVALIDA = "Acessando memoria em local indevido";
+	string SECAO_FALTANTE               = "Seção faltante";
+	string SECAO_INVALIDA               = "Seção inválida";
+	string mod_const                    = "Nao se pode modificar uma constante";
+	string div_zero                     = "Divisao por zero";
 }
 namespace instructions
 {

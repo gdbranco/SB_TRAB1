@@ -23,7 +23,7 @@ private:
     code_t make_listaEQU(code_t _code);
     code_t preproc(code_t _code);
     code_t passagem_macros(code_t _code);
-    vector<int> passagiunics(code_t code);
+    vector<int> passagem_unica(code_t code);
     int define_exists(const define_t procura);
     int symbol_exists(string procura);
 public:

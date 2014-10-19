@@ -196,7 +196,7 @@ extern string COMP_INST_NAO_DEF;
 extern string COMP_DIR_NAO_DEF;
 extern string COMP_ARG_INV;
 extern string COMP_JMP_ERRADO;
-extern string COMP_FUDEU_BURACO_ERRADO;
+extern string COMP_ACESSO_MEMORIA_INVALIDA;
 extern string SECAO_FALTANTE;
 extern string SECAO_INVALIDA;
 extern string mod_const;

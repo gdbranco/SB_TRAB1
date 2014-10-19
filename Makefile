@@ -1,11 +1,11 @@
 .PHONY: parser.o prog
 
-CFLAGS=-ansi -Wall -std=c++11 -c -g
+CFLAGS=-ansi -Wall -c
 
 all: prog
 
 prog: parser.o defines.o macroTable.o
-	g++ -g main.cpp -std=c++11 parser.o MacroTable.o defines.o -o montador.out
+	g++ -g main.cpp parser.o MacroTable.o defines.o -o montador
 
 defines.o: defines.h
 	g++ $(CFLAGS) defines.cpp
@@ -20,4 +20,3 @@ clean:
 	rm -f *.pre
 	rm -f *.mcr
 	rm -f *.o
-	rm -f *.out

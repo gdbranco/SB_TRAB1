@@ -375,7 +375,7 @@ code_t PARSER::passagem_macros(code_t _code)
   *	Divisão por zero
   *	Endereço de memória não reservado
   ** Modificado const**/
-vector<int> PARSER::passagiunics(code_t code)
+vector<int> PARSER::passagem_unica(code_t code)
 {
     unsigned int PC=0;
     int sinal;
@@ -820,7 +820,7 @@ end_pass:
 			} else {
 				if (!mem_access_list[i].is_jump)
 				{
-					erros_list.push_back(erro_t(mem_access_list[i].linha,erros::SEMANTICO, erros::COMP_FUDEU_BURACO_ERRADO));
+					erros_list.push_back(erro_t(mem_access_list[i].linha,erros::SEMANTICO, erros::COMP_ACESSO_MEMORIA_INVALIDA));
 				}
 			}
 		} else {
@@ -833,7 +833,7 @@ end_pass:
 				} else {
 					if (!mem_access_list[i].is_jump)
 					{
-						erros_list.push_back(erro_t(mem_access_list[i].linha,erros::SEMANTICO, erros::COMP_FUDEU_BURACO_ERRADO));
+						erros_list.push_back(erro_t(mem_access_list[i].linha,erros::SEMANTICO, erros::COMP_ACESSO_MEMORIA_INVALIDA));
 					}
 				}
 		}
@@ -909,7 +909,7 @@ vector<int> PARSER::run_montador(code_t code)
 {
     PARSER p;
 	vector<int> obj_code;
-    obj_code = p.passagiunics(code);
+    obj_code = p.passagem_unica(code);
     return obj_code;
 }
 int PARSER::define_exists(define_t procura)
