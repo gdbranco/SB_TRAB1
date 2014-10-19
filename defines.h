@@ -156,6 +156,8 @@ extern string COMP_INST_SECAO_ERRADA;
 extern string COMP_DIR_SECAO_ERRADA;
 extern string COMP_INST_NAO_DEF;
 extern string COMP_DIR_NAO_DEF;
+extern string COMP_ARG_INV;
+extern string SECAO_FALTANTE;
 }
 namespace sections
 {

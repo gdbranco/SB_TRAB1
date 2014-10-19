@@ -365,14 +365,14 @@ code_t PARSER::passagem_macros(code_t _code)
 /**TODO: Erros
   **	Declaração ausente
   **	Declaração repetida
-  *	Pulo para rótulo inválido
-  *	Diretiva inválida
-  *	Instrução inválida
+  **	Diretiva inválida
+  **	Instrução inválida
   **	Diretiva ou instrução na sessão errada
+  **	Rótulo duplo na mesma linha
+  **	Seção faltante
+  **	Tipo de argumento inválido
+  *	Pulo para rótulo inválido
   *	Divisão por zero
-  *	Rótulo duplo na mesma linha
-  *	Seção faltante
-  *	Tipo de argumento inválido
   *	Endereço de memória não reservado
   *	Modificado const**/
 code_t PARSER::passagiunics(code_t code)
@@ -386,8 +386,9 @@ code_t PARSER::passagiunics(code_t code)
     code_t::iterator linha = _code.begin();
     tsmb_t::iterator last_symbol;
     std::vector<string>::iterator cp_iter;
+	short check_sessions = 0;
     unsigned int increment_add;
-    bool space_found,const_found, is_soma, has_label;
+    bool space_found, const_found, is_soma, has_label;
 	bool section_text = true;
 
     while(linha!=_code.end())
@@ -416,6 +417,16 @@ code_t PARSER::passagiunics(code_t code)
         sinal = 1;
         cout << PC << ' ';
         vector<string>::iterator token = linha->tokens.begin();
+		/*	Vai iterar na linha, token a token. Vai testar o token numa sequencia ordenada de possibilidades, e agir de acordo com ela.
+		 *	A sequencia está na seguinte ordem (e faz toda a diferença)
+		 *	Checa se o Token é uma soma ou subtração.
+		 *	Checa se uma soma ou subtração no operando já está acontecendo.
+		 *	Checa se o token anterior é um space ou const.
+		 *	Checa se o token atual se encaixa na definição de label.
+		 *	Checa se o token atual é uma instrução válida.
+		 *	Checa se o token atual é uma diretiva válida.
+		 *	Checa se o token atual é um símbolo válido.
+		 *	Caso não seja nenhum desses, vai ser um argumento inválido*/
         while(token!=linha->tokens.end())
         {
             inst_t rinst;
@@ -428,33 +439,44 @@ code_t PARSER::passagiunics(code_t code)
             TODO: erros **/
 
 			/*Confere se tem soma ou subtração*/
+//TOKEN == +
             if ((*token) == "+")
             {
-				/*Confere se a expressão acaba prematuramente*/
-                if (token == linha->tokens.end() - 1)
-                {
+				if (!section_text) {
                     erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::COMP_EXPR_INCORRETA)); 
-                }
-                else
-                {
-                    is_soma = true;
-                }
+				} else {
+					/*Confere se a expressão acaba prematuramente*/
+					if (token == linha->tokens.end() - 1)
+					{
+						erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::COMP_EXPR_INCORRETA)); 
+					}
+					else
+					{
+						is_soma = true;
+					}
+				}
                 increment_add = 0;
             }
+//TOKEN == -
             else if ((*token) == "-")
             {
-				/*Confere se a expressão acaba prematuramente*/
-                if (token == linha->tokens.end() - 1)
-                {
+				if (!section_text) {
                     erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::COMP_EXPR_INCORRETA)); 
-                }
-                else
-                {
-                    is_soma = true;
-                    sinal = -1;
-                }
+				} else {
+					/*Confere se a expressão acaba prematuramente*/
+					if (token == linha->tokens.end() - 1)
+					{
+						erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::COMP_EXPR_INCORRETA)); 
+					}
+					else
+					{
+						is_soma = true;
+						sinal = -1;
+					}
+				}
                 increment_add = 0;
             }
+//TOKEN anterior é + ou -
             else if (is_soma)
             {
                 increment_add = 0;
@@ -491,6 +513,37 @@ code_t PARSER::passagiunics(code_t code)
 
                 }
             }
+//TOKEN anterior é SPACE
+            else if(space_found)
+            {
+                if(token!=linha->tokens.end())
+                {
+					if (isNumber(*token)) {
+						increment_add = atoi(token->c_str());
+						if (increment_add <= 0) {
+							erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO, erros::COMP_ARG_INV)); 
+						} else {
+							increment_add--;
+							for(unsigned int i=0; i<increment_add; i++)
+							{
+								obj_code.push_back(0);
+							}
+						}
+					} else {
+						erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO, erros::COMP_ARG_INV)); 
+					}
+                }
+            }
+//TOKEN anterior é CONST
+            else if(const_found)
+            {
+				if (isNumber(*token)) {
+					obj_code.push_back(atoi(token->c_str()));
+				} else {
+					erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO, erros::COMP_ARG_INV)); 
+				}
+            }
+//TOKEN é uma label
             else if(islabel(*token))
             {
                 increment_add = 0; //Se for uma label não aumenta o endereço
@@ -522,6 +575,7 @@ code_t PARSER::passagiunics(code_t code)
                 }
 				has_label = true;
             }
+//TOKEN é uma instrução
             else if(isinst(*token,rinst)) /**Refazer para melhorar a estrutura de instrucoes e diretivas**/
             {
 				/*Confere se a instrução não está na seção de dados*/
@@ -544,6 +598,7 @@ code_t PARSER::passagiunics(code_t code)
 				/*Guarda na lista de código objeto*/
                 obj_code.push_back(rinst.inst_hex);
             }
+//TOKEN é uma diretiva
             else if(isdir(*token))
             {
                 increment_add=0;
@@ -576,8 +631,10 @@ code_t PARSER::passagiunics(code_t code)
 					} else {
 						section_text = false;	
 					}
+					check_sessions++;	
 				}
             }
+//TOKEN é um símbolo qualquer (referência a labels)
             else if(isSymbol(*token))
             {
                 int i = symbol_exists(*token);
@@ -635,27 +692,22 @@ code_t PARSER::passagiunics(code_t code)
 				}
 
             }
-            else if(space_found)
-            {
-                if(token!=linha->tokens.end())
-                {
-                    increment_add = atoi(token->c_str())-1;
-                    for(unsigned int i=0; i<increment_add; i++)
-                    {
-                        obj_code.push_back(0);
-                    }
-                }
-            }
-            else if(const_found)
-            {
-                obj_code.push_back(atoi(token->c_str()));
-            }
+//Se não for nenhum destes, é inválido
+			else
+			{
+				erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO, erros::COMP_ARG_INV)); 
+			}
             token++;
             PC+=increment_add; /**Nao pode contar diretivas**/
         }
         cout << endl;
         linha++;
     }
+
+	if(check_sessions < 2) {
+		erros_list.push_back(erro_t(0,erros::SEMANTICO, erros::SECAO_FALTANTE)); 
+	}
+
     cout << "END FINAL : " << PC << endl;
     cout << "Nome, Valor, def, Lista de uso" << endl;
     for (int i = 0; i < (int) simb_list.size(); ++i)
