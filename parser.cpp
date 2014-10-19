@@ -382,6 +382,7 @@ vector<int> PARSER::passagiunics(code_t code)
     code_t _code = code;
     vector<int> obj_code;
 	vector<int> mod_const; //Array de posições em que um const é modificado
+	vector< mem_acc_t > mem_access_list;
     tsum_t sum_list;
     code_t::iterator linha = _code.begin();
     tsmb_t::iterator last_symbol;
@@ -392,6 +393,9 @@ vector<int> PARSER::passagiunics(code_t code)
 	bool section_text = true;
 	bool last_inst_mem_changer;
 	bool last_inst_div;
+	bool last_inst_jmp;
+	int end_first_section = 0;
+	bool text_first=true;
 
     while(linha!=_code.end())
     {
@@ -401,6 +405,7 @@ vector<int> PARSER::passagiunics(code_t code)
 		has_label = false;
 		last_inst_mem_changer = false;
 		last_inst_div = false;
+		last_inst_jmp = false;
 
         /*Lógica para o COPY funcionar com vírgula */
         cp_iter = find(linha->tokens.begin(), linha->tokens.end(), "COPY");
@@ -431,7 +436,6 @@ vector<int> PARSER::passagiunics(code_t code)
 
         }
         sinal = 1;
-        cout << PC << ' ';
         vector<string>::iterator token = linha->tokens.begin();
 		/*	Vai iterar na linha, token a token. Vai testar o token numa sequencia ordenada de possibilidades, e agir de acordo com ela.
 		 *	A sequencia está na seguinte ordem (e faz toda a diferença)
@@ -447,7 +451,6 @@ vector<int> PARSER::passagiunics(code_t code)
         {
             inst_t rinst;
             increment_add = 1; //Ao chegar num novo token o incremento do endereco eh sempre 1
-            cout << *token << ' ';
 
 
 			/*Confere se tem soma ou subtração*/
@@ -617,6 +620,13 @@ vector<int> PARSER::passagiunics(code_t code)
 				{
 					last_inst_div = true;
 				}
+				else if(rinst == instructions::JMP ||
+						rinst == instructions::JMPN ||
+						rinst == instructions::JMPP ||
+						rinst == instructions::JMPZ)
+				{
+					last_inst_jmp = true;
+				}
 				/*Guarda na lista de código objeto*/
                 obj_code.push_back(rinst.inst_hex);
             }
@@ -649,9 +659,27 @@ vector<int> PARSER::passagiunics(code_t code)
 				else if(*token == diretivas::SECTION)
 				{
 					if( *(token + 1) == "TEXT" ) {
-						section_text = true;	
+						if(PC == 0)
+						{
+							text_first = true;
+							section_text = true;	
+						}
+						if(!section_text)
+						{
+							end_first_section = PC;
+						}
+						section_text = true;
 						check_sessions++;	
 					} else if( *(token + 1) == "DATA" ) {
+						if(!PC)
+						{
+							text_first = false;
+							section_text = false;	
+						}
+						if(section_text)
+						{
+							end_first_section = PC;
+						}
 						section_text = false;	
 						check_sessions++;	
 					} else {
@@ -712,11 +740,11 @@ vector<int> PARSER::passagiunics(code_t code)
 							} else {
 								simb_list[i].lista_mem_changer.push_back(last_inst_mem_changer);
 							}
+
 							simb_list[i].div_list.push_back(last_inst_div);
 							simb_list[i].lista_nlinha.push_back(linha->nlinha);
 							obj_code.push_back(0);
 						}
-
 					}
 					else
 					{
@@ -736,6 +764,7 @@ vector<int> PARSER::passagiunics(code_t code)
 						simb_list.push_back(smb_t((*token), -1, false, index_list,mem_changer_list,div_list,linha_list));
 						obj_code.push_back(0);
 					}
+					mem_access_list.push_back(mem_acc_t(PC, last_inst_jmp, linha->nlinha));
 				}
 
             }
@@ -747,7 +776,6 @@ vector<int> PARSER::passagiunics(code_t code)
             token++;
             PC+=increment_add; /**Nao pode contar diretivas**/
         }
-        cout << endl;
         linha++;
     }
 
@@ -757,12 +785,13 @@ vector<int> PARSER::passagiunics(code_t code)
 	}
 
 end_pass:
-    cout << "END FINAL : " << PC << endl;
+    /*cout << "END FINAL : " << PC << endl;
     cout << "Nome, Valor, def, Lista de uso" << endl;
     for (int i = 0; i < (int) simb_list.size(); ++i)
     {
         cout << simb_list[i] << endl;
-    }
+    }*/
+
 
 	/* Adiciona os valores das labels definidas atrasado nos locais corretos de memória. */
     for(unsigned int i=0; i<simb_list.size(); i++)
@@ -775,6 +804,40 @@ end_pass:
 			}
         }
     }
+
+	//Pega erros de acesso a labels por instrucoes erradas
+	for (unsigned int i = 0; i < mem_access_list.size(); ++i)
+	{
+		if (text_first)
+		{
+			if (obj_code[mem_access_list[i].PC] > end_first_section-1)
+			{
+				/*instrucao era jump*/
+				if (mem_access_list[i].is_jump)
+				{
+					erros_list.push_back(erro_t(mem_access_list[i].linha,erros::SEMANTICO, erros::COMP_JMP_ERRADO));
+				}
+			} else {
+				if (!mem_access_list[i].is_jump)
+				{
+					erros_list.push_back(erro_t(mem_access_list[i].linha,erros::SEMANTICO, erros::COMP_FUDEU_BURACO_ERRADO));
+				}
+			}
+		} else {
+				if (obj_code[mem_access_list[i].PC] < end_first_section){
+				/*instrucao era jump*/
+					if (mem_access_list[i].is_jump)
+					{
+						erros_list.push_back(erro_t(mem_access_list[i].linha,erros::SEMANTICO, erros::COMP_JMP_ERRADO));
+					}
+				} else {
+					if (!mem_access_list[i].is_jump)
+					{
+						erros_list.push_back(erro_t(mem_access_list[i].linha,erros::SEMANTICO, erros::COMP_FUDEU_BURACO_ERRADO));
+					}
+				}
+		}
+	}
 
 	/* Grava os erros caso as labels terminem sem serem definidas*/
     for(unsigned int i=0; i<simb_list.size(); i++) {
@@ -824,14 +887,14 @@ end_pass:
     }
 
     //Mostra o codigo obj
-    for(unsigned int i=0; i<obj_code.size(); i++)
+    /*for(unsigned int i=0; i<obj_code.size(); i++)
     {
         cout << obj_code[i];
         if(i!=obj_code.size()-1)
         {
             cout << endl;
         }
-    }
+    }*/
     return obj_code;
 }
 

@@ -5,6 +5,15 @@
 #include <vector>
 #include <iostream>
 using namespace std;
+typedef struct _mem_acc
+{
+	unsigned int PC;
+	bool is_jump;
+	unsigned int linha;
+	_mem_acc(){}
+	_mem_acc(const unsigned int _PC, const bool _is_jump, const unsigned int _linha):
+	PC(_PC),is_jump(_is_jump),linha(_linha){}
+}mem_acc_t;
 typedef struct _smb
 {
     string simb;
@@ -186,6 +195,8 @@ extern string COMP_DIR_SECAO_ERRADA;
 extern string COMP_INST_NAO_DEF;
 extern string COMP_DIR_NAO_DEF;
 extern string COMP_ARG_INV;
+extern string COMP_JMP_ERRADO;
+extern string COMP_FUDEU_BURACO_ERRADO;
 extern string SECAO_FALTANTE;
 extern string SECAO_INVALIDA;
 extern string mod_const;

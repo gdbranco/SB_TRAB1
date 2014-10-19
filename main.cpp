@@ -124,7 +124,7 @@ virtual_code_wrapper* handle_pass(std::string nome_arq, virtual_code_wrapper* co
         }
         else
         {
-            cout << endl << "---ERROS---" << endl;
+            cout << "---ERROS---" << endl;
             for(unsigned int i=0; i<PARSER::erros_list.size(); i++)
             {
                 cout << PARSER::erros_list[i] << endl;

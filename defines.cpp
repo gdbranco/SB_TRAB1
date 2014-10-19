@@ -26,6 +26,8 @@ namespace erros
 	string COMP_INST_NAO_DEF	    = "Instrução não definida";
 	string COMP_DIR_NAO_DEF	    	= "Diretiva não definida";
 	string COMP_ARG_INV		    	= "Argumento inválido";
+	string COMP_JMP_ERRADO		    = "Jump para secao de dados";
+	string COMP_FUDEU_BURACO_ERRADO = "Acessando memoria em local indevido";
 	string SECAO_FALTANTE	    	= "Seção faltante";
 	string SECAO_INVALIDA	    	= "Seção inválida";
 	string mod_const                = "Nao se pode modificar uma constante";
