@@ -687,7 +687,12 @@ vector<int> PARSER::passagiunics(code_t code)
 						else
 						{
 							simb_list[i].lista_end.push_back(PC);
-							simb_list[i].lista_mem_changer.push_back(last_inst_mem_changer);
+							/*Lógica pro COPY e outras instruções não modificarem constante*/
+							if (*(token-1) == "COPY") {
+								simb_list[i].lista_mem_changer.push_back(false);
+							} else {
+								simb_list[i].lista_mem_changer.push_back(last_inst_mem_changer);
+							}
 							simb_list[i].div_list.push_back(last_inst_div);
 							simb_list[i].lista_nlinha.push_back(linha->nlinha);
 							obj_code.push_back(0);
@@ -699,7 +704,12 @@ vector<int> PARSER::passagiunics(code_t code)
 						std::vector<int> index_list;
 						index_list.push_back(PC);
 						vector<bool> mem_changer_list;
-						mem_changer_list.push_back(last_inst_mem_changer);
+						/*Lógica pro COPY e outras instruções não modificarem constante*/
+						if (*(token-1) == "COPY") {
+							mem_changer_list.push_back(0);
+						} else {
+							mem_changer_list.push_back(last_inst_mem_changer);
+						}
 						vector<bool> div_list;
 						div_list.push_back(last_inst_div);
 						vector<int> linha_list;
