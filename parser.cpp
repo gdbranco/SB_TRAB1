@@ -401,20 +401,34 @@ vector<int> PARSER::passagiunics(code_t code)
 		has_label = false;
 		last_inst_mem_changer = false;
 		last_inst_div = false;
+
         /*Lógica para o COPY funcionar com vírgula
 		 * (Apenas segundo argumento) */
         cp_iter = find(linha->tokens.begin(), linha->tokens.end(), "COPY");
         if( cp_iter != linha->tokens.end())
         {
-            cp_iter++;
-            if(cp_iter->find_last_of(',') + cp_iter->begin() == cp_iter->end() -1)
-            {
-                *cp_iter=cp_iter->substr(0, cp_iter->length()-1);
-            }
-            else
-            {
-				erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::COMP_COPY_VIRGULA)); 
-            }
+			if (*(cp_iter + 2) == "+" || *(cp_iter + 2) == "-") {
+				cp_iter += 3;
+				if(cp_iter->find_last_of(',') + cp_iter->begin() == cp_iter->end() -1)
+				{
+					*cp_iter=cp_iter->substr(0, cp_iter->length()-1);
+				}
+				else
+				{
+					erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::COMP_COPY_VIRGULA)); 
+				}
+				
+			} else {
+				cp_iter++;
+				if(cp_iter->find_last_of(',') + cp_iter->begin() == cp_iter->end() -1)
+				{
+					*cp_iter=cp_iter->substr(0, cp_iter->length()-1);
+				}
+				else
+				{
+					erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::COMP_COPY_VIRGULA)); 
+				}
+			}
 
         }
         sinal = 1;
