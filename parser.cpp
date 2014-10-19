@@ -748,8 +748,8 @@ code_t PARSER::passagiunics(code_t code)
 	/* Grava os erros caso as labels terminem sem serem definidas*/
     for(unsigned int i=0; i<simb_list.size(); i++) {
 		if(simb_list[i].value < 1) {
-			for (unsigned int j = 0; j < simb_list[i].lista_end.size(); j++) {
-				erros_list.push_back(erro_t(simb_list[i].lista_end[j],erros::SEMANTICO,erros::label_nao_def)); 
+			for (unsigned int j = 0; j < simb_list[i].lista_nlinha.size(); j++) {
+				erros_list.push_back(erro_t(simb_list[i].lista_nlinha[j],erros::SEMANTICO,erros::label_nao_def)); 
 			}
 		}
 	}
