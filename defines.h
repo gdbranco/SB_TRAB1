@@ -187,6 +187,7 @@ extern string COMP_INST_NAO_DEF;
 extern string COMP_DIR_NAO_DEF;
 extern string COMP_ARG_INV;
 extern string SECAO_FALTANTE;
+extern string SECAO_INVALIDA;
 extern string mod_const;
 extern string div_zero;
 }

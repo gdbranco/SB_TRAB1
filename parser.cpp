@@ -650,10 +650,15 @@ vector<int> PARSER::passagiunics(code_t code)
 				{
 					if( *(token + 1) == "TEXT" ) {
 						section_text = true;	
+						check_sessions++;	
+					} else if( *(token + 1) == "DATA" ) {
+						section_text = false;	
+						check_sessions++;	
 					} else {
 						section_text = false;	
+						erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::SECAO_INVALIDA)); 
+						goto end_pass;
 					}
-					check_sessions++;	
 				}
             }
 //TOKEN é um símbolo qualquer (referência a labels)
@@ -745,10 +750,12 @@ vector<int> PARSER::passagiunics(code_t code)
         linha++;
     }
 
+
 	if(check_sessions < 2) {
 		erros_list.push_back(erro_t(0,erros::SEMANTICO, erros::SECAO_FALTANTE)); 
 	}
 
+end_pass:
     cout << "END FINAL : " << PC << endl;
     cout << "Nome, Valor, def, Lista de uso" << endl;
     for (int i = 0; i < (int) simb_list.size(); ++i)
