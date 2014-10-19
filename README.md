@@ -18,11 +18,12 @@ A opção **make clean** pode ser usada para remover os arquivos de saída do mo
 Visão geral do projeto
 ----------------------
 
-O código se divide essencialmente em 4 arquivos (além da main.cpp), com seus headers:  
+O código se divide essencialmente em 4 arquivos, com seus headers:  
 
 - defines.cpp
 - MacroTable.cpp
 - parser.cpp 
+- main.cpp
 
 
 ###defines
