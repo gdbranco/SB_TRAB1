@@ -152,6 +152,8 @@ extern string MACRO_endless;
 extern string COMP_COPY_VIRGULA;
 extern string COMP_EXPR_INCORRETA;
 extern string COMP_QTD_OPERANDOS_INV;
+extern string COMP_INST_SECAO_ERRADA;
+extern string COMP_DIR_SECAO_ERRADA;
 }
 namespace sections
 {

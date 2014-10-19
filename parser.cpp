@@ -388,6 +388,7 @@ code_t PARSER::passagiunics(code_t code)
     std::vector<string>::iterator cp_iter;
     unsigned int increment_add;
     bool space_found,const_found, is_soma, has_label;
+	bool section_text = true;
 
     while(linha!=_code.end())
     {
@@ -396,7 +397,8 @@ code_t PARSER::passagiunics(code_t code)
         is_soma = false;
 		has_label = false;
 
-        /*Lógica para o COPY funcionar com vírgula*/
+        /*Lógica para o COPY funcionar com vírgula
+		 * (Apenas segundo argumento) */
         cp_iter = find(linha->tokens.begin(), linha->tokens.end(), "COPY");
         if( cp_iter != linha->tokens.end())
         {
@@ -413,7 +415,6 @@ code_t PARSER::passagiunics(code_t code)
         }
         sinal = 1;
         cout << PC << ' ';
-        //cout << linha->nlinha << ' ' << *linha << endl;
         vector<string>::iterator token = linha->tokens.begin();
         while(token!=linha->tokens.end())
         {
@@ -515,6 +516,9 @@ code_t PARSER::passagiunics(code_t code)
             }
             else if(isinst(*token,rinst)) /**Refazer para melhorar a estrutura de instrucoes e diretivas**/
             {
+				if(!section_text) {
+					erros_list.push_back(erro_t(linha->nlinha,erros::SEMANTICO,erros::COMP_INST_SECAO_ERRADA)); 
+				}
 				/*Confere a quantidade de argumentos*/
 				unsigned int line_size = linha->tokens.size();
 				if(find(linha->tokens.begin(), linha->tokens.end(), "+") != linha->tokens.end()) {
@@ -541,18 +545,32 @@ code_t PARSER::passagiunics(code_t code)
                 increment_add=0;
                 if(*token == diretivas::SPACE)
                 {
+					if(section_text) {
+						erros_list.push_back(erro_t(linha->nlinha,erros::SEMANTICO,erros::COMP_DIR_SECAO_ERRADA)); 
+					}
                     space_found = true;
                     increment_add=1;
                     obj_code.push_back(0);
                 }
                 else if(*token == diretivas::CONST)
                 {
+					if(section_text) {
+						erros_list.push_back(erro_t(linha->nlinha,erros::SEMANTICO,erros::COMP_DIR_SECAO_ERRADA)); 
+					}
                     const_found = true;
                     if(simb_list.size() > 0)
                     {
                         last_symbol->is_const = true;
                     }
-                }
+				}
+				else if(*token == diretivas::SECTION)
+				{
+					if( *(token + 1) == "TEXT" ) {
+						section_text = true;	
+					} else {
+						section_text = false;	
+					}
+				}
             }
             else if(isSymbol(*token))
             {
