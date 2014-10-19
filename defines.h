@@ -13,9 +13,10 @@ typedef struct _smb
     bool is_const;
     vector<int> lista_end;
 	vector<bool> lista_mem_changer;
+	vector<bool> div_list;
     _smb() {}
-    _smb(const string _simb, const int _value,const bool _def,const vector<int> _lista_end,const vector<bool> _lista_mem_changer):
-        simb(_simb),value(_value),def(_def),is_const(false),lista_end(_lista_end),lista_mem_changer(_lista_mem_changer) {}
+    _smb(const string _simb, const int _value,const bool _def,const vector<int> _lista_end,const vector<bool> _lista_mem_changer,vector<bool> _div_list):
+        simb(_simb),value(_value),def(_def),is_const(false),lista_end(_lista_end),lista_mem_changer(_lista_mem_changer),div_list(_div_list) {}
     _smb(const string _simb, const int _value,const bool _def):
         simb(_simb),value(_value),def(_def), is_const(false) {}
     friend ostream& operator<<(ostream& os,const _smb& it)
@@ -167,6 +168,7 @@ extern string COMP_DIR_NAO_DEF;
 extern string COMP_ARG_INV;
 extern string SECAO_FALTANTE;
 extern string mod_const;
+extern string div_zero;
 }
 namespace sections
 {

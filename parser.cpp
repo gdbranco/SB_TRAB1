@@ -374,7 +374,7 @@ code_t PARSER::passagem_macros(code_t _code)
   *	Pulo para rótulo inválido
   *	Divisão por zero
   *	Endereço de memória não reservado
-  *	Modificado const**/
+  ** Modificado const**/
 code_t PARSER::passagiunics(code_t code)
 {
     unsigned int PC=0;
@@ -391,6 +391,7 @@ code_t PARSER::passagiunics(code_t code)
     bool space_found, const_found, is_soma, has_label;
 	bool section_text = true;
 	bool last_inst_mem_changer;
+	bool last_inst_div;
 
     while(linha!=_code.end())
     {
@@ -399,6 +400,7 @@ code_t PARSER::passagiunics(code_t code)
         is_soma = false;
 		has_label = false;
 		last_inst_mem_changer = false;
+		last_inst_div = false;
         /*Lógica para o COPY funcionar com vírgula
 		 * (Apenas segundo argumento) */
         cp_iter = find(linha->tokens.begin(), linha->tokens.end(), "COPY");
@@ -598,6 +600,10 @@ code_t PARSER::passagiunics(code_t code)
 				{
 					last_inst_mem_changer = true;
 				}
+				else if(rinst == instructions::DIV)
+				{
+					last_inst_div = true;
+				}
 				/*Guarda na lista de código objeto*/
                 obj_code.push_back(rinst.inst_hex);
             }
@@ -682,6 +688,7 @@ code_t PARSER::passagiunics(code_t code)
 						{
 							simb_list[i].lista_end.push_back(PC);
 							simb_list[i].lista_mem_changer.push_back(last_inst_mem_changer);
+							simb_list[i].div_list.push_back(last_inst_div);
 							obj_code.push_back(0);
 						}
 
@@ -692,7 +699,9 @@ code_t PARSER::passagiunics(code_t code)
 						index_list.push_back(PC);
 						vector<bool> mem_changer_list;
 						mem_changer_list.push_back(last_inst_mem_changer);
-						simb_list.push_back(smb_t((*token), -1, false, index_list,mem_changer_list));
+						vector<bool> div_list;
+						div_list.push_back(last_inst_div);
+						simb_list.push_back(smb_t((*token), -1, false, index_list,mem_changer_list,div_list));
 						obj_code.push_back(0);
 					}
 				}
@@ -741,14 +750,26 @@ code_t PARSER::passagiunics(code_t code)
 			}
 		}
 	}
-	//Grava os erros de modificar memoria const
+	//Grava os erros de modificar memoria const e de divisao por zero
 	for(unsigned int i = 0; i < simb_list.size(); i++)
 	{
-		for(unsigned int j=0;j<simb_list[i].lista_mem_changer.size();j++)
+		if(simb_list[i].is_const)
 		{
-			if(simb_list[i].lista_mem_changer[j] && simb_list[i].is_const)
+			int ok = symbol_exists(simb_list[i].simb);
+			int valor_const = obj_code[(ok+simb_list.begin())->value];
+			for(unsigned int j=0;j<simb_list[i].lista_mem_changer.size();j++)
 			{
-				erros_list.push_back(erro_t(simb_list[i].lista_end[j],erros::SEMANTICO,erros::mod_const));
+				if(simb_list[i].lista_mem_changer[j])
+				{
+					erros_list.push_back(erro_t(simb_list[i].lista_end[j],erros::SEMANTICO,erros::mod_const));
+				}
+			}
+			for(unsigned int j=0;j<simb_list[i].div_list.size();j++)
+			{
+			 	if(simb_list[i].div_list[j] && !valor_const)
+				{
+					erros_list.push_back(erro_t(simb_list[i].lista_end[j],erros::SEMANTICO,erros::div_zero));
+				}
 			}
 		}
 	}
