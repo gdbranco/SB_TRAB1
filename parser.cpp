@@ -689,6 +689,7 @@ code_t PARSER::passagiunics(code_t code)
 							simb_list[i].lista_end.push_back(PC);
 							simb_list[i].lista_mem_changer.push_back(last_inst_mem_changer);
 							simb_list[i].div_list.push_back(last_inst_div);
+							simb_list[i].lista_nlinha.push_back(linha->nlinha);
 							obj_code.push_back(0);
 						}
 
@@ -701,7 +702,9 @@ code_t PARSER::passagiunics(code_t code)
 						mem_changer_list.push_back(last_inst_mem_changer);
 						vector<bool> div_list;
 						div_list.push_back(last_inst_div);
-						simb_list.push_back(smb_t((*token), -1, false, index_list,mem_changer_list,div_list));
+						vector<int> linha_list;
+						linha_list.push_back(linha->nlinha);
+						simb_list.push_back(smb_t((*token), -1, false, index_list,mem_changer_list,div_list,linha_list));
 						obj_code.push_back(0);
 					}
 				}
@@ -761,14 +764,14 @@ code_t PARSER::passagiunics(code_t code)
 			{
 				if(simb_list[i].lista_mem_changer[j])
 				{
-					erros_list.push_back(erro_t(simb_list[i].lista_end[j],erros::SEMANTICO,erros::mod_const));
+					erros_list.push_back(erro_t(simb_list[i].lista_nlinha[j],erros::SEMANTICO,erros::mod_const));
 				}
 			}
 			for(unsigned int j=0;j<simb_list[i].div_list.size();j++)
 			{
 			 	if(simb_list[i].div_list[j] && !valor_const)
 				{
-					erros_list.push_back(erro_t(simb_list[i].lista_end[j],erros::SEMANTICO,erros::div_zero));
+					erros_list.push_back(erro_t(simb_list[i].lista_nlinha[j],erros::SEMANTICO,erros::div_zero));
 				}
 			}
 		}

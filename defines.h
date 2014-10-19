@@ -14,9 +14,10 @@ typedef struct _smb
     vector<int> lista_end;
 	vector<bool> lista_mem_changer;
 	vector<bool> div_list;
+	vector<int> lista_nlinha;
     _smb() {}
-    _smb(const string _simb, const int _value,const bool _def,const vector<int> _lista_end,const vector<bool> _lista_mem_changer,vector<bool> _div_list):
-        simb(_simb),value(_value),def(_def),is_const(false),lista_end(_lista_end),lista_mem_changer(_lista_mem_changer),div_list(_div_list) {}
+    _smb(const string _simb, const int _value,const bool _def,const vector<int> _lista_end,const vector<bool> _lista_mem_changer,const vector<bool> _div_list,const vector<int> _lista_nlinha):
+        simb(_simb),value(_value),def(_def),is_const(false),lista_end(_lista_end),lista_mem_changer(_lista_mem_changer),div_list(_div_list),lista_nlinha(_lista_nlinha) {}
     _smb(const string _simb, const int _value,const bool _def):
         simb(_simb),value(_value),def(_def), is_const(false) {}
     friend ostream& operator<<(ostream& os,const _smb& it)
