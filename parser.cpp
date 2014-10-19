@@ -390,6 +390,7 @@ code_t PARSER::passagiunics(code_t code)
     unsigned int increment_add;
     bool space_found, const_found, is_soma, has_label;
 	bool section_text = true;
+	bool last_inst_mem_changer;
 
     while(linha!=_code.end())
     {
@@ -397,7 +398,7 @@ code_t PARSER::passagiunics(code_t code)
         const_found = false;
         is_soma = false;
 		has_label = false;
-
+		last_inst_mem_changer = false;
         /*Lógica para o COPY funcionar com vírgula
 		 * (Apenas segundo argumento) */
         cp_iter = find(linha->tokens.begin(), linha->tokens.end(), "COPY");
@@ -433,10 +434,6 @@ code_t PARSER::passagiunics(code_t code)
             increment_add = 1; //Ao chegar num novo token o incremento do endereco eh sempre 1
             cout << *token << ' ';
 
-            /**
-            Logica para tratar token a token
-            Done: se label, se instruction, se diretiva, tabela de simbolos, codigo objeto
-            TODO: erros **/
 
 			/*Confere se tem soma ou subtração*/
 //TOKEN == +
@@ -595,6 +592,12 @@ code_t PARSER::passagiunics(code_t code)
 					erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::COMP_QTD_OPERANDOS_INV)); 
 				}
                 increment_add = 1;
+				if(rinst == instructions::STORE ||
+				   rinst == instructions::INPUT ||
+				   rinst == instructions::COPY)
+				{
+					last_inst_mem_changer = true;
+				}
 				/*Guarda na lista de código objeto*/
                 obj_code.push_back(rinst.inst_hex);
             }
@@ -678,6 +681,7 @@ code_t PARSER::passagiunics(code_t code)
 						else
 						{
 							simb_list[i].lista_end.push_back(PC);
+							simb_list[i].lista_mem_changer.push_back(last_inst_mem_changer);
 							obj_code.push_back(0);
 						}
 
@@ -686,7 +690,9 @@ code_t PARSER::passagiunics(code_t code)
 					{
 						std::vector<int> index_list;
 						index_list.push_back(PC);
-						simb_list.push_back(smb_t((*token), -1, false, index_list));
+						vector<bool> mem_changer_list;
+						mem_changer_list.push_back(last_inst_mem_changer);
+						simb_list.push_back(smb_t((*token), -1, false, index_list,mem_changer_list));
 						obj_code.push_back(0);
 					}
 				}
@@ -732,6 +738,17 @@ code_t PARSER::passagiunics(code_t code)
 		if(simb_list[i].value < 1) {
 			for (unsigned int j = 0; j < simb_list[i].lista_end.size(); j++) {
 				erros_list.push_back(erro_t(simb_list[i].lista_end[j],erros::SEMANTICO,erros::label_nao_def)); 
+			}
+		}
+	}
+	//Grava os erros de modificar memoria const
+	for(unsigned int i = 0; i < simb_list.size(); i++)
+	{
+		for(unsigned int j=0;j<simb_list[i].lista_mem_changer.size();j++)
+		{
+			if(simb_list[i].lista_mem_changer[j] && simb_list[i].is_const)
+			{
+				erros_list.push_back(erro_t(simb_list[i].lista_end[j],erros::SEMANTICO,erros::mod_const));
 			}
 		}
 	}
