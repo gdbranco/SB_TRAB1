@@ -23,7 +23,7 @@ private:
     code_t make_listaEQU(code_t _code);
     code_t preproc(code_t _code);
     code_t passagem_macros(code_t _code);
-    code_t passagiunics(code_t code);
+    vector<int> passagiunics(code_t code);
     int define_exists(const define_t procura);
     int symbol_exists(string procura);
 public:
@@ -38,7 +38,7 @@ public:
     static bool isNumber(string simb);
     static code_t run_preproc(code_t _code);
     static code_t run_macros(code_t code);
-    static code_t run_montador(code_t code);
+    static vector<int> run_montador(code_t code);
     static code_t toMEM(const string nome_arq);
     static string retiraComentarios(string _linha);
     static void inicializa_paradas();

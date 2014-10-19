@@ -6,7 +6,10 @@
 #include "parser.h"
 using namespace std;
 
-void handle_pass(std::string nome_arq, code_t &memoria, const string run_type, bool log);
+/*	*Função única para realizar cada passada. Definida pela string "run_type". Loga os erros se "lol" for true.
+	*Recebe uma memória encapsulada em um virtual_code_wrapper. No input, code_wrapper sempre vai ser do tipo text_code_wrapper.
+	*Na passagem única retorna um object_code (vector<int>) encapsulado em um obj_code_wrapper.*/
+virtual_code_wrapper* handle_pass(std::string nome_arq, virtual_code_wrapper* code_wrapper, const string run_type, bool log);
 
 int main(int argc,char **argv)
 {
@@ -19,27 +22,30 @@ int main(int argc,char **argv)
     string nome_base(argv[2]);
     string nome_arq = nome_base+".asm";
     memoria = PARSER::toMEM(nome_arq);
-    //for(unsigned int i=0;i<memoria.size();i++)
-    //{
-    //cout << memoria[i] << endl;
-    //}
-    //cin.get();
+
+	/*virtual_code_wrapper serve como abstração para os tipos de código diferentes (vector<linha> e vector<int>)*/
+	virtual_code_wrapper* mem_wrapper;
+
+
     /**Roda as passagens apropriadas dependendo da flag passada
      * -p roda só pré-processamento, -m roda macros também, -o roda tudo**/
     if(run_type==run_type::PRE_PROCESS_EQU)
     {
-        handle_pass(string(nome_base + ".pre"), memoria, run_type::PRE_PROCESS_EQU, true);
+		mem_wrapper = new text_code_wrapper(memoria); 
+        handle_pass(string(nome_base + ".pre"), mem_wrapper, run_type::PRE_PROCESS_EQU, true);
     }
     else if(run_type==run_type::PRE_PROCESS_MACRO)
     {
-        handle_pass(string(nome_base + ".pre"), memoria, run_type::PRE_PROCESS_EQU, false);
-        handle_pass(string(nome_base + ".mcr"), memoria, run_type::PRE_PROCESS_MACRO, true);
+		mem_wrapper = new text_code_wrapper(memoria); 
+        handle_pass(string(nome_base + ".pre"), mem_wrapper, run_type::PRE_PROCESS_EQU, false);
+        handle_pass(string(nome_base + ".mcr"), mem_wrapper, run_type::PRE_PROCESS_MACRO, true);
     }
     else if(run_type==run_type::COMPILE)
     {
-        handle_pass(string(nome_base + ".pre"), memoria, run_type::PRE_PROCESS_EQU, false);
-        handle_pass(string(nome_base + ".mcr"), memoria, run_type::PRE_PROCESS_MACRO, false);
-        handle_pass(string(nome_base + ".o"), memoria, run_type::COMPILE, true);
+		mem_wrapper = new text_code_wrapper(memoria); 
+        handle_pass(string(nome_base + ".pre"), mem_wrapper, run_type::PRE_PROCESS_EQU, false);
+        handle_pass(string(nome_base + ".mcr"), mem_wrapper, run_type::PRE_PROCESS_MACRO, false);
+        handle_pass(string(nome_base + ".o"), mem_wrapper, run_type::COMPILE, true);
     }
     else
     {
@@ -48,22 +54,30 @@ int main(int argc,char **argv)
     return 0;
 }
 
-void handle_pass(std::string nome_arq, code_t &memoria, const string run_type, bool log)
+virtual_code_wrapper* handle_pass(std::string nome_arq, virtual_code_wrapper* code_wrapper, const string run_type, bool log)
 {
     code_t memoriaLOCAL;
+	vector<int> obj_codeLOCAL;
 
     /*Roda a passagem correta e seta a memória*/
     if (run_type==run_type::PRE_PROCESS_EQU)
     {
-        memoriaLOCAL = PARSER::run_preproc(memoria);
+		/*Roda o pré-processamento para o código dentro de code_wrapper (vector<linha>)*/
+        memoriaLOCAL = PARSER::run_preproc(   (  (text_code_wrapper*) code_wrapper)->code_impl   );
+		code_wrapper = new text_code_wrapper(memoriaLOCAL); 
     }
     else if (run_type==run_type::PRE_PROCESS_MACRO)
     {
-        memoriaLOCAL = PARSER::run_macros(memoria);
+		/*Roda a passagem de macros para o código dentro de code_wrapper (vector<linha>)*/
+        memoriaLOCAL = PARSER::run_macros(   (  (text_code_wrapper*) code_wrapper)->code_impl   );
+		code_wrapper = new text_code_wrapper(memoriaLOCAL); 
     }
     else
     {
-        memoriaLOCAL = PARSER::run_montador(memoria);
+		/* Roda a passagem única para o código dentro de code_wrapper (vector<linha>)
+		 * Retorna um obj_code (vector<int>)*/
+        obj_codeLOCAL = PARSER::run_montador(   (  (text_code_wrapper*) code_wrapper)->code_impl  );
+		code_wrapper = new obj_code_wrapper(obj_codeLOCAL); 
     }
 
 
@@ -79,19 +93,29 @@ void handle_pass(std::string nome_arq, code_t &memoria, const string run_type, b
     {
         myarq.open(nome_arq.c_str());
 
-        if(!memoriaLOCAL.empty() && PARSER::erros_list.empty())
+        if(PARSER::erros_list.empty())
         {
-            for(unsigned int i=0; i<memoriaLOCAL.size(); i++)
-            {
-                //cout << memoriaEQU[i].nlinha << ' ';
-                //cout << memoriaMACRO[i];
-                myarq << memoriaLOCAL[i];
-                if(i!=memoriaLOCAL.size()-1)
-                {
-                    myarq << endl;
-                }
+			if (run_type == run_type::COMPILE ) {
+				if (!obj_codeLOCAL.empty()) {
+					for(unsigned int i=0; i<obj_codeLOCAL.size(); i++)
+					{
+						myarq << obj_codeLOCAL[i] << " ";
+					}
+				}
+			} else {
+				if (!memoriaLOCAL.empty()) {
+					for(unsigned int i=0; i<memoriaLOCAL.size(); i++)
+					{
+						cout << memoriaLOCAL[i] << endl;
+						myarq << memoriaLOCAL[i];
+						if(i!=memoriaLOCAL.size()-1)
+						{
+							myarq << endl;
+						}
 
-            }
+					}
+				}
+			}
 
         }
         else
@@ -106,6 +130,4 @@ void handle_pass(std::string nome_arq, code_t &memoria, const string run_type, b
         myarq.close();
     }
 
-    /*Seta a memoria passada para a memória local*/
-    memoria = memoriaLOCAL;
 }

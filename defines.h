@@ -101,6 +101,25 @@ typedef struct _linha
 } linha_t, Linha;
 typedef vector<linha_t> code_t;
 
+/*Classes para abstração da memória de códigos para a main*/
+class virtual_code_wrapper
+{ };
+
+class	text_code_wrapper : public virtual_code_wrapper
+{
+	public:
+		code_t	code_impl;
+		text_code_wrapper(code_t _code) : code_impl(_code) {}
+};
+
+class	obj_code_wrapper : public virtual_code_wrapper
+{
+	public:
+		vector<int>	obj_code;
+		obj_code_wrapper(vector<int> _code) : obj_code(_code) {}
+};
+// ----------
+
 struct Macro
 {
     string label;

@@ -375,7 +375,7 @@ code_t PARSER::passagem_macros(code_t _code)
   *	Divisão por zero
   *	Endereço de memória não reservado
   ** Modificado const**/
-code_t PARSER::passagiunics(code_t code)
+vector<int> PARSER::passagiunics(code_t code)
 {
     unsigned int PC=0;
     int sinal;
@@ -801,7 +801,7 @@ code_t PARSER::passagiunics(code_t code)
             cout << endl;
         }
     }
-    return _code;
+    return obj_code;
 }
 
 code_t PARSER::run_macros(code_t code)
@@ -811,11 +811,12 @@ code_t PARSER::run_macros(code_t code)
     return code;
 }
 
-code_t PARSER::run_montador(code_t code)
+vector<int> PARSER::run_montador(code_t code)
 {
     PARSER p;
-    code = p.passagiunics(code);
-    return code;
+	vector<int> obj_code;
+    obj_code = p.passagiunics(code);
+    return obj_code;
 }
 int PARSER::define_exists(define_t procura)
 {
