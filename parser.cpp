@@ -430,6 +430,7 @@ code_t PARSER::passagiunics(code_t code)
 			/*Confere se tem soma ou subtração*/
             if ((*token) == "+")
             {
+				/*Confere se a expressão acaba prematuramente*/
                 if (token == linha->tokens.end() - 1)
                 {
                     erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::COMP_EXPR_INCORRETA)); 
@@ -442,6 +443,7 @@ code_t PARSER::passagiunics(code_t code)
             }
             else if ((*token) == "-")
             {
+				/*Confere se a expressão acaba prematuramente*/
                 if (token == linha->tokens.end() - 1)
                 {
                     erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::COMP_EXPR_INCORRETA)); 
@@ -522,6 +524,7 @@ code_t PARSER::passagiunics(code_t code)
             }
             else if(isinst(*token,rinst)) /**Refazer para melhorar a estrutura de instrucoes e diretivas**/
             {
+				/*Confere se a instrução não está na seção de dados*/
 				if(!section_text) {
 					erros_list.push_back(erro_t(linha->nlinha,erros::SEMANTICO,erros::COMP_INST_SECAO_ERRADA)); 
 				}
@@ -546,6 +549,7 @@ code_t PARSER::passagiunics(code_t code)
                 increment_add=0;
                 if(*token == diretivas::SPACE)
                 {
+					/*Confere se a diretiva não está na seção de texto*/
 					if(section_text) {
 						erros_list.push_back(erro_t(linha->nlinha,erros::SEMANTICO,erros::COMP_DIR_SECAO_ERRADA)); 
 					}
@@ -555,6 +559,7 @@ code_t PARSER::passagiunics(code_t code)
                 }
                 else if(*token == diretivas::CONST)
                 {
+					/*Confere se a diretiva não está na seção de texto*/
 					if(section_text) {
 						erros_list.push_back(erro_t(linha->nlinha,erros::SEMANTICO,erros::COMP_DIR_SECAO_ERRADA)); 
 					}
@@ -576,26 +581,58 @@ code_t PARSER::passagiunics(code_t code)
             else if(isSymbol(*token))
             {
                 int i = symbol_exists(*token);
-                if (i > -1)
-                {
-                    if(simb_list[i].def)
-                    {
-                        obj_code.push_back(simb_list[i].value);
-                    }
-                    else
-                    {
-                        simb_list[i].lista_end.push_back(PC);
-                        obj_code.push_back(0);
-                    }
 
-                }
-                else
-                {
-                    std::vector<int> index_list;
-                    index_list.push_back(PC);
-                    simb_list.push_back(smb_t((*token), -1, false, index_list));
-                    obj_code.push_back(0);
-                }
+				/*Confere se o simbolo é uma instrução ou diretiva não definida*/
+				bool inst_nao_def = false;
+				string erro;
+				if (has_label) {
+					if (section_text) {
+						erro = erros::COMP_INST_NAO_DEF;
+					} else {
+						erro = erros::COMP_DIR_NAO_DEF;
+					}
+					if (token - linha->tokens.begin() == 1) {
+						erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO, erro)); 
+						increment_add = 0;
+						inst_nao_def = true;
+					}
+				} else {
+					if (section_text) {
+						erro = erros::COMP_INST_NAO_DEF;
+					} else {
+						erro = erros::COMP_DIR_NAO_DEF;
+					}
+					if (token - linha->tokens.begin() == 0) {
+						erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO, erro)); 
+						increment_add = 0;
+						inst_nao_def = true;
+					}
+				}
+
+				/*If para evitar que a instrução não definida vá para o código objeto e zoe os erros*/
+				if (!inst_nao_def) {
+					/*Confere se a label ja existe e etc.*/
+					if (i > -1)
+					{
+						if(simb_list[i].def)
+						{
+							obj_code.push_back(simb_list[i].value);
+						}
+						else
+						{
+							simb_list[i].lista_end.push_back(PC);
+							obj_code.push_back(0);
+						}
+
+					}
+					else
+					{
+						std::vector<int> index_list;
+						index_list.push_back(PC);
+						simb_list.push_back(smb_t((*token), -1, false, index_list));
+						obj_code.push_back(0);
+					}
+				}
 
             }
             else if(space_found)

@@ -22,7 +22,9 @@ namespace erros
     string COMP_EXPR_INCORRETA      = "Expressão (soma/subtração) malformada";
 	string COMP_QTD_OPERANDOS_INV	= "Quantidade de operandos inválida";
 	string COMP_INST_SECAO_ERRADA   = "Instrução na seção de dados";
-	string COMP_DIR_SECAO_ERRADA   = "Diretiva na seção de dados";
+	string COMP_DIR_SECAO_ERRADA    = "Diretiva na seção de dados";
+	string COMP_INST_NAO_DEF	    = "Instrução não definida";
+	string COMP_DIR_NAO_DEF	    	= "Diretiva não definida";
 }
 namespace instructions
 {
