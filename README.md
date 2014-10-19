@@ -14,6 +14,7 @@ As flags utilizadas são:
 A opção **make clean** pode ser usada para remover os arquivos de saída do montador.  
 
 
+
 Visão geral do projeto
 ----------------------
 
