@@ -368,7 +368,7 @@ code_t PARSER::passagem_macros(code_t _code)
   *	Pulo para rótulo inválido
   *	Diretiva inválida
   *	Instrução inválida
-  *	Diretiva ou instrução na sessão errada
+  **	Diretiva ou instrução na sessão errada
   *	Divisão por zero
   *	Rótulo duplo na mesma linha
   *	Seção faltante
@@ -430,7 +430,7 @@ code_t PARSER::passagiunics(code_t code)
 			/*Confere se tem soma ou subtração*/
             if ((*token) == "+")
             {
-                if (token == linha->tokens.end())
+                if (token == linha->tokens.end() - 1)
                 {
                     erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::COMP_EXPR_INCORRETA)); 
                 }
@@ -442,7 +442,7 @@ code_t PARSER::passagiunics(code_t code)
             }
             else if ((*token) == "-")
             {
-                if (token == linha->tokens.end())
+                if (token == linha->tokens.end() - 1)
                 {
                     erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::COMP_EXPR_INCORRETA)); 
                 }
@@ -493,6 +493,12 @@ code_t PARSER::passagiunics(code_t code)
             {
                 increment_add = 0; //Se for uma label não aumenta o endereço
                 int i = symbol_exists(token->substr(0, token->length() - 1));
+
+				if(has_label) {
+					erros_list.push_back(erro_t(linha->nlinha,erros::SEMANTICO,erros::label_dupla)); 
+				}
+
+				/*Se label ja existe*/
                 if (i > -1)
                 {
                     if(simb_list[i].def)
@@ -520,21 +526,16 @@ code_t PARSER::passagiunics(code_t code)
 					erros_list.push_back(erro_t(linha->nlinha,erros::SEMANTICO,erros::COMP_INST_SECAO_ERRADA)); 
 				}
 				/*Confere a quantidade de argumentos*/
-				unsigned int line_size = linha->tokens.size();
+				unsigned int line_size = linha->tokens.end() - token;
 				if(find(linha->tokens.begin(), linha->tokens.end(), "+") != linha->tokens.end()) {
 					line_size -= 2;
 				}
 				if(find(linha->tokens.begin(), linha->tokens.end(), "-") != linha->tokens.end()) {
 					line_size -= 2;
 				}
-				if(has_label) {
-					if (line_size != rinst.qtd_operandos + 2) {
-						erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::COMP_QTD_OPERANDOS_INV)); 
-					} 
-				} else {
-					if (line_size != rinst.qtd_operandos + 1) {
-						erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::COMP_QTD_OPERANDOS_INV)); 
-					}
+
+				if (line_size != rinst.qtd_operandos + 1) {
+					erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::COMP_QTD_OPERANDOS_INV)); 
 				}
                 increment_add = 1;
 				/*Guarda na lista de código objeto*/
