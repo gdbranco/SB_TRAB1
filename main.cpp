@@ -99,14 +99,18 @@ virtual_code_wrapper* handle_pass(std::string nome_arq, virtual_code_wrapper* co
 				if (!obj_codeLOCAL.empty()) {
 					for(unsigned int i=0; i<obj_codeLOCAL.size(); i++)
 					{
-						myarq << obj_codeLOCAL[i] << " ";
+						myarq << obj_codeLOCAL[i];
+						if(i!=obj_codeLOCAL.size()-1)
+						{
+							myarq << " ";
+						}
 					}
 				}
 			} else {
 				if (!memoriaLOCAL.empty()) {
 					for(unsigned int i=0; i<memoriaLOCAL.size(); i++)
 					{
-						cout << memoriaLOCAL[i] << endl;
+						//cout << memoriaLOCAL[i] << endl;
 						myarq << memoriaLOCAL[i];
 						if(i!=memoriaLOCAL.size()-1)
 						{
