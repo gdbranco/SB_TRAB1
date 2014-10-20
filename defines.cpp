@@ -30,6 +30,7 @@ namespace erros
 	string COMP_ACESSO_MEMORIA_INVALIDA = "Acessando memoria em local indevido";
 	string SECAO_FALTANTE               = "Seção faltante";
 	string SECAO_INVALIDA               = "Seção inválida";
+	string SECAO_REPETIDA               = "Seção repetida";
 	string mod_const                    = "Nao se pode modificar uma constante";
 	string div_zero                     = "Divisao por zero";
 }

@@ -199,6 +199,7 @@ extern string COMP_JMP_ERRADO;
 extern string COMP_ACESSO_MEMORIA_INVALIDA;
 extern string SECAO_FALTANTE;
 extern string SECAO_INVALIDA;
+extern string SECAO_REPETIDA;
 extern string mod_const;
 extern string div_zero;
 }

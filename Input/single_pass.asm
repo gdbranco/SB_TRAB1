@@ -21,12 +21,9 @@ store B
 jmpp loop
 
 if lol
-output B - 1
-output B + offset
+output B
 
 stop
-
-
 
 SECTION DATA
 B: SPACE
@@ -35,4 +32,4 @@ QUOT: SPACE
 resto: SPACE
 volta: space
 offset: const 1
-lol: EqU 0
+lol: EqU 1

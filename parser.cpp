@@ -669,6 +669,9 @@ vector<int> PARSER::passagem_unica(code_t code)
 							end_first_section = PC;
 						}
 						section_text = true;
+						if (check_sessions > 1) {
+							erros_list.push_back(erro_t(linha->nlinha,erros::SEMANTICO,erros::SECAO_REPETIDA)); 
+						}
 						check_sessions++;	
 					} else if( *(token + 1) == "DATA" ) {
 						if(!PC)
@@ -681,6 +684,9 @@ vector<int> PARSER::passagem_unica(code_t code)
 							end_first_section = PC;
 						}
 						section_text = false;	
+						if (check_sessions > 1) {
+							erros_list.push_back(erro_t(linha->nlinha,erros::SEMANTICO,erros::SECAO_REPETIDA)); 
+						}
 						check_sessions++;	
 					} else {
 						section_text = false;	
@@ -693,7 +699,6 @@ vector<int> PARSER::passagem_unica(code_t code)
 //TOKEN é um símbolo qualquer (referência a labels)
             else if(isSymbol(*token))
             {
-                int i = symbol_exists(*token);
 
 				/*Confere se o simbolo é uma instrução ou diretiva não definida*/
 				bool inst_nao_def = false;
@@ -722,6 +727,8 @@ vector<int> PARSER::passagem_unica(code_t code)
 					}
 				}
 
+                int i = symbol_exists(*token);
+
 				/*If para evitar que a instrução não definida vá para o código objeto e zoe os erros*/
 				if (!inst_nao_def) {
 					/*Confere se a label ja existe e etc.*/
@@ -730,6 +737,13 @@ vector<int> PARSER::passagem_unica(code_t code)
 						if(simb_list[i].def)
 						{
 							obj_code.push_back(simb_list[i].value);
+							if (*(token-1) == "COPY") {
+								simb_list[i].lista_mem_changer.push_back(false);
+							} else {
+								simb_list[i].lista_mem_changer.push_back(last_inst_mem_changer);
+							}
+							simb_list[i].div_list.push_back(last_inst_div);
+							simb_list[i].lista_nlinha.push_back(linha->nlinha);
 						}
 						else
 						{
@@ -812,11 +826,19 @@ end_pass:
 		{
 			if (obj_code[mem_access_list[i].PC] > end_first_section-1)
 			{
-				/*instrucao era jump*/
-				if (mem_access_list[i].is_jump)
-				{
-					erros_list.push_back(erro_t(mem_access_list[i].linha,erros::SEMANTICO, erros::COMP_JMP_ERRADO));
+				if((unsigned int)obj_code[mem_access_list[i].PC] <= obj_code.size() ) {
+					/*instrucao era jump*/
+					if (mem_access_list[i].is_jump)
+					{
+						erros_list.push_back(erro_t(mem_access_list[i].linha,erros::SEMANTICO, erros::COMP_JMP_ERRADO));
+					}
+				} else {
+					erros_list.push_back(erro_t(mem_access_list[i].linha,erros::SEMANTICO, erros::COMP_ACESSO_MEMORIA_INVALIDA));
+				
 				}
+			} else if (obj_code[mem_access_list[i].PC] < 0 ) {
+					erros_list.push_back(erro_t(mem_access_list[i].linha,erros::SEMANTICO, erros::COMP_ACESSO_MEMORIA_INVALIDA));
+			
 			} else {
 				if (!mem_access_list[i].is_jump)
 				{
@@ -830,6 +852,12 @@ end_pass:
 					{
 						erros_list.push_back(erro_t(mem_access_list[i].linha,erros::SEMANTICO, erros::COMP_JMP_ERRADO));
 					}
+				} else if ((unsigned int)obj_code[mem_access_list[i].PC] > obj_code.size()) {
+						erros_list.push_back(erro_t(mem_access_list[i].linha,erros::SEMANTICO, erros::COMP_ACESSO_MEMORIA_INVALIDA));
+				
+				} else if (obj_code[mem_access_list[i].PC] < 0 ) {
+						erros_list.push_back(erro_t(mem_access_list[i].linha,erros::SEMANTICO, erros::COMP_ACESSO_MEMORIA_INVALIDA));
+				
 				} else {
 					if (!mem_access_list[i].is_jump)
 					{
@@ -841,7 +869,7 @@ end_pass:
 
 	/* Grava os erros caso as labels terminem sem serem definidas*/
     for(unsigned int i=0; i<simb_list.size(); i++) {
-		if(simb_list[i].value < 1) {
+		if(simb_list[i].value < 0) {
 			for (unsigned int j = 0; j < simb_list[i].lista_nlinha.size(); j++) {
 				erros_list.push_back(erro_t(simb_list[i].lista_nlinha[j],erros::SEMANTICO,erros::label_nao_def)); 
 			}
