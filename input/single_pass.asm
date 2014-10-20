@@ -20,9 +20,6 @@ load QUOT
 store B
 jmpp loop
 
-if lol
-output B
-
 stop
 
 SECTION DATA

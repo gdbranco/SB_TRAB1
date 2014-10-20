@@ -8,6 +8,7 @@
 *.lib
 *.class
 *.dll
+montador
 #Comprimidos#
 #############
 *.7z
