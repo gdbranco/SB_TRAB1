@@ -13,6 +13,23 @@ As flags utilizadas são:
 
 A opção **make clean** pode ser usada para remover os arquivos de saída do montador.  
 
+Instruções de execução
+----------------------
+
+O programa recebe dois argumentos obrigatórios e um opcional, nessa ordem:  
+
+- A flag de compilação.
+
+  1. O programa pode fazer apenas o pré-processamento (-p), retirando comentários e espaços em branco, e substituindo EQU e IFs.
+  2. Pode realizar o pré-processamento e a passagem de macros, substituindo as definições de macros pelo seu corpo.
+  3. Compilação completa, gerando código objeto.  
+
+- O arquivo de input, sem extensão.  
+- Um arquivo opcional, de saída, também sem extensão.  
+
+Exemplo de uso:
+
+`./montador -o arquivo_de_input arq_saida`
 
 
 Visão geral do projeto
