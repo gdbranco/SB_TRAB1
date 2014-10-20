@@ -187,6 +187,7 @@ extern string EQU_ndefinida;
 extern string MACRO_no_label;
 extern string MACRO_label_no_delimiter;
 extern string MACRO_endless;
+extern string MACRO_LOCAL_ERRADO;
 extern string COMP_COPY_VIRGULA;
 extern string COMP_EXPR_INCORRETA;
 extern string COMP_QTD_OPERANDOS_INV;

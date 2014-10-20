@@ -321,41 +321,68 @@ code_t PARSER::passagem_macros(code_t _code)
     code_t macro_result;
     code_t code(_code);
     MacroTable mct;
+	bool section = false;
 
     it = code.begin();
     while(it != code.end())
     {
+        if (std::find(it->tokens.begin(), it->tokens.end(), "SECTION") != it->tokens.end()) {
+			if (std::find(it->tokens.begin(), it->tokens.end(), "DATA") != it->tokens.end()) {
+				section = false;
+
+			} else if (std::find(it->tokens.begin(), it->tokens.end(), "TEXT") != it->tokens.end()) {
+				section = true;
+
+			} else {
+				section = false;
+			}
+		}
+		
         /*Se a linha possui "macro", é uma declaração que deve ser colocada na tabela.*/
         if (std::find(it->tokens.begin(), it->tokens.end(), "MACRO") != it->tokens.end())
         {
-            /*Guarda o indice do iterador para recuperá-lo após apagar do vetor*/
-            int aux = code.begin() - it;
-            m_beg = it;
-            m_end = mct.create_macro(it, code, erros_list);
-            if(m_end != code.end())
-            {
-                code.erase(m_beg, m_end + 1);
-            }
-            it = code.begin() + aux;
+			if(!section) {
+				erros_list.push_back(erro_t(it->nlinha,erros::SEMANTICO,erros::MACRO_LOCAL_ERRADO)); 
+			
+			} else {
+				/*Guarda o indice do iterador para recuperá-lo após apagar do vetor*/
+				int aux = it - code.begin();
+				m_beg = it;
+				m_end = mct.create_macro(it, code, erros_list);
+				if(m_end != code.end())
+				{
+					code.erase(m_beg, m_end + 1);
+				}
+				it = code.begin() + aux;
+			}
 
 
             /*Caso contrário, confere se possui label e declaração e substitui o código.*/
         }
-        else if (  (PARSER::islabel(it->tokens[0])) && mct.has(it->tokens[1])  )
+        else if ((PARSER::islabel(it->tokens[0]))   )
         {
-            macro_result = mct.get_macro(it);
-            code.erase(it);
-            code.insert(it, macro_result.begin(), macro_result.end());
+			if(it->tokens.size() > 1) {
+					if(mct.has(it->tokens[1])) {
+						macro_result = mct.get_macro(it);
+						code.erase(it);
+						code.insert(it, macro_result.begin(), macro_result.end());
+					}
+				}
 
             /*Substitui a chamada pelo corpo da macro*/
         }
-        else if (  mct.has(it->tokens[0])  )
+        else if (section && mct.has(it->tokens[0])  )
         {
-            macro_result = mct.get_macro(it);
-            code.erase(it);
-            code.insert(it, macro_result.begin(), macro_result.end());
+			if(!section) {
+				erros_list.push_back(erro_t(it->nlinha,erros::SEMANTICO,erros::MACRO_LOCAL_ERRADO)); 
+			
+			} else {
+				macro_result = mct.get_macro(it);
+				code.erase(it);
+				code.insert(it, macro_result.begin(), macro_result.end());
+			}
 
-        }
+		}
         it++;
     }
     return code;

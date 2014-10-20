@@ -1,3 +1,4 @@
+
 SECTION TEXT
 resto_macro: macro
 store RESTO
@@ -26,6 +27,9 @@ output B
 stop
 
 SECTION DATA
+loko: macro
+teste
+end
 B: SPACE
 DOIS: CONST 2
 QUOT: SPACE

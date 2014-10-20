@@ -18,6 +18,7 @@ namespace erros
     string MACRO_no_label               = "Macro não pode ser definida sem label";
     string MACRO_label_no_delimiter     = "Label da macro precisa terminar em ':'";
     string MACRO_endless                = "Macro sem delimitação final";
+    string MACRO_LOCAL_ERRADO           = "Macro na seção errada";
     string COMP_COPY_VIRGULA            = "Copy sem vírgula";
     string COMP_EXPR_INCORRETA          = "Expressão (soma/subtração) malformada";
 	string COMP_QTD_OPERANDOS_INV       = "Quantidade de operandos inválida";
