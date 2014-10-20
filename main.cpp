@@ -9,7 +9,7 @@ using namespace std;
 /*	*Função única para realizar cada passada. Definida pela string "run_type". Loga os erros se "log" for true.
 	*Recebe uma memória encapsulada em um virtual_code_wrapper. No input, code_wrapper sempre vai ser do tipo text_code_wrapper.
 	*Na passagem única retorna um object_code (vector<int>) encapsulado em um obj_code_wrapper.*/
-void handle_pass(std::string nome_arq, virtual_code_wrapper* code_wrapper, const string run_type, bool log);
+virtual_code_wrapper* handle_pass(std::string nome_arq, virtual_code_wrapper* code_wrapper, const string run_type, bool log);
 
 int main(int argc,char **argv)
 {
@@ -37,22 +37,22 @@ int main(int argc,char **argv)
     if(run_type==run_type::PRE_PROCESS_EQU)
     {
 		mem_wrapper = new text_code_wrapper(memoria); 
-        handle_pass(string(nome_base + ".pre"), mem_wrapper, run_type::PRE_PROCESS_EQU, true);
+        mem_wrapper = handle_pass(string(nome_base + ".pre"), mem_wrapper, run_type::PRE_PROCESS_EQU, true);
 		delete mem_wrapper;
     }
     else if(run_type==run_type::PRE_PROCESS_MACRO)
     {
 		mem_wrapper = new text_code_wrapper(memoria); 
-        handle_pass(string(nome_base + ".pre"), mem_wrapper, run_type::PRE_PROCESS_EQU, false);
-        handle_pass(string(nome_base + ".mcr"), mem_wrapper, run_type::PRE_PROCESS_MACRO, true);
+        mem_wrapper = handle_pass(string(nome_base + ".pre"), mem_wrapper, run_type::PRE_PROCESS_EQU, false);
+        mem_wrapper = handle_pass(string(nome_base + ".mcr"), mem_wrapper, run_type::PRE_PROCESS_MACRO, true);
 		delete mem_wrapper;
     }
     else if(run_type==run_type::COMPILE)
     {
 		mem_wrapper = new text_code_wrapper(memoria); 
-        handle_pass(string(nome_base + ".pre"), mem_wrapper, run_type::PRE_PROCESS_EQU, false);
-        handle_pass(string(nome_base + ".mcr"), mem_wrapper, run_type::PRE_PROCESS_MACRO, false);
-        handle_pass(string(nome_base + ".o"), mem_wrapper, run_type::COMPILE, true);
+        mem_wrapper = handle_pass(string(nome_base + ".pre"), mem_wrapper, run_type::PRE_PROCESS_EQU, false);
+        mem_wrapper = handle_pass(string(nome_base + ".mcr"), mem_wrapper, run_type::PRE_PROCESS_MACRO, false);
+        mem_wrapper = handle_pass(string(nome_base + ".o"), mem_wrapper, run_type::COMPILE, true);
 		delete mem_wrapper;
     }
     else
@@ -62,7 +62,7 @@ int main(int argc,char **argv)
     return 0;
 }
 
-void handle_pass(std::string nome_arq, virtual_code_wrapper* code_wrapper, const string run_type, bool log)
+virtual_code_wrapper* handle_pass(std::string nome_arq, virtual_code_wrapper* code_wrapper, const string run_type, bool log)
 {
     code_t memoriaLOCAL;
 	vector<int> obj_codeLOCAL;
@@ -141,5 +141,7 @@ void handle_pass(std::string nome_arq, virtual_code_wrapper* code_wrapper, const
 
         myarq.close();
     }
+
+	return code_wrapper;
 
 }

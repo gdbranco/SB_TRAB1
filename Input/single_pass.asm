@@ -1,17 +1,38 @@
 SECTION TEXT
-;Loko: JMP H
-;DIV Loko 
-INPUT B
-COPY DOIS, B
-INPUT H
-LOAD B
-MULT H
-DIV DOIS
-STORE R
-OUTPUT R
-STOP
+resto_macro: macro
+store RESTO
+output RESTO
+end
+
+input B
+
+loop:
+load B
+div DOIS
+store QUOT
+load QUOT
+mult DOIS
+store VOLTA
+load B
+sub VOLTA
+resto_macro
+load QUOT
+store B
+jmpp loop
+
+if lol
+output B - 1
+output B + offset
+
+stop
+
+
+
 SECTION DATA
-B: SPACE 5
-H: SPACE
-R: SPACE
+B: SPACE
 DOIS: CONST 2
+QUOT: SPACE
+resto: SPACE
+volta: space
+offset: const 1
+lol: EqU 0

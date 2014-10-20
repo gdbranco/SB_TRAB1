@@ -1,6 +1,6 @@
 .PHONY: parser.o prog
 
-CFLAGS=-ansi -Wall -c
+CFLAGS=-ansi -Wall -c -g
 
 all: prog
 
