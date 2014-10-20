@@ -21,15 +21,9 @@ load QUOT
 store B
 jmpp loop
 
-if lol
-output B
-
 stop
 
 SECTION DATA
-loko: macro
-teste
-end
 B: SPACE
 DOIS: CONST 2
 QUOT: SPACE
