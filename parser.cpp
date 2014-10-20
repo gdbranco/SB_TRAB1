@@ -1054,10 +1054,15 @@ bool PARSER::isSymbol(string simb)
 bool PARSER::isNumber(string simb)
 {
     string valid = "0987654321";
+	string my(simb);
     int i = 0;
-    for (i = 0; i < (int) simb.size(); ++i)
+	if(my[0] == '-') {
+		my = simb.substr(1, simb.length());
+	
+	}
+    for (i = 0; i < (int) my.size(); ++i)
     {
-        if (valid.find(simb[i]) == string::npos)
+        if (valid.find(my[i]) == string::npos)
         {
             return false;
         }
