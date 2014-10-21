@@ -174,11 +174,13 @@ extern string PRE_PROCESS_EQU;
 extern string PRE_PROCESS_MACRO;
 extern string COMPILE;
 }
+
 namespace erros
 {
 extern string SINTATICO;
 extern string SEMANTICO;
 extern string LEXICO;
+extern string token_invalido;
 extern string label_redefinida;
 extern string label_dupla;
 extern string label_nao_def;

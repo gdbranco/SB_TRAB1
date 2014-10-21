@@ -572,7 +572,13 @@ vector<int> PARSER::passagem_unica(code_t code)
 							}
 						}
 					} else {
-						erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO, erros::COMP_ARG_INV)); 
+						if(!isSymbol(*token)) {
+							erros_list.push_back(erro_t(linha->nlinha,erros::LEXICO, erros::token_invalido)); 
+						
+						} else {
+							erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO, erros::COMP_ARG_INV)); 
+						
+						}
 					}
                 }
             }
@@ -582,7 +588,13 @@ vector<int> PARSER::passagem_unica(code_t code)
 				if (isNumber(*token)) {
 					obj_code.push_back(atoi(token->c_str()));
 				} else {
-					erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO, erros::COMP_ARG_INV)); 
+					if(!isSymbol(*token)) {
+						erros_list.push_back(erro_t(linha->nlinha,erros::LEXICO, erros::token_invalido)); 
+					
+					} else {
+						erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO, erros::COMP_ARG_INV)); 
+					
+					}
 				}
             }
 //TOKEN é uma label
@@ -812,7 +824,13 @@ vector<int> PARSER::passagem_unica(code_t code)
 //Se não for nenhum destes, é inválido
 			else
 			{
-				erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO, erros::COMP_ARG_INV)); 
+				if(!isNumber(*token)) {
+					erros_list.push_back(erro_t(linha->nlinha,erros::LEXICO, erros::token_invalido)); 
+				} else {
+					erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO, erros::COMP_ARG_INV)); 
+				
+
+				}
 			}
             token++;
             PC+=increment_add; /**Nao pode contar diretivas**/
