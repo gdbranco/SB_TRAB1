@@ -3,6 +3,10 @@ resto_macro: macro
 store RESTO
 output RESTO
 end
+teste: macro
+load QUOT
+store B
+end
 
 input B
 
@@ -16,15 +20,14 @@ store VOLTA
 load B
 sub VOLTA
 resto_macro
-load QUOT
-store B
+teste
 jmpp loop
 
 stop
 
 SECTION DATA
 B: SPACE
-DOIS: CONST -2
+DOIS: CONST 2
 QUOT: SPACE
 resto: SPACE
 volta: space
