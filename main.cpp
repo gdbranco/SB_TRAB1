@@ -100,10 +100,9 @@ virtual_code_wrapper* handle_pass(std::string nome_arq, virtual_code_wrapper* co
     /*Loga os erros e imprime o arquivo*/
     if (log)
     {
-        myarq.open(nome_arq.c_str());
-
         if(PARSER::erros_list.empty())
         {
+			myarq.open(nome_arq.c_str());
 			if (run_type == run_type::COMPILE ) {
 				if (!obj_codeLOCAL.empty()) {
 					for(unsigned int i=0; i<obj_codeLOCAL.size(); i++)
@@ -129,7 +128,7 @@ virtual_code_wrapper* handle_pass(std::string nome_arq, virtual_code_wrapper* co
 					}
 				}
 			}
-
+			myarq.close();
         }
         else
         {
@@ -139,8 +138,6 @@ virtual_code_wrapper* handle_pass(std::string nome_arq, virtual_code_wrapper* co
                 cout << PARSER::erros_list[i] << endl;
             }
         }
-
-        myarq.close();
     }
 
 	return code_wrapper;
