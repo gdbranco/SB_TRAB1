@@ -920,7 +920,7 @@ end_pass:
 			{
 			 	if(simb_list[i].div_list[j] && !valor_const)
 				{
-					erros_list.push_back(erro_t(simb_list[i].lista_nlinha[j],erros::SEMANTICO,erros::div_zero));
+					erros_list.push_back(erro_t(simb_list[i].lista_nlinha[j],erros::SINTATICO,erros::div_zero));
 				}
 			}
 		}
