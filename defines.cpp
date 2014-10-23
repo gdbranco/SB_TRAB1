@@ -10,6 +10,7 @@ namespace erros
     string SINTATICO                    = "ERRO SINTATICO";
     string SEMANTICO                    = "ERRO SEMANTICO";
     string LEXICO                       = "ERRO LEXICO";
+    string token_invalido               = "Token inválido";
     string label_redefinida             = "Redefinicao de label";
     string label_dupla                  = "Duas labels na mesma linha";
     string label_nao_def                = "Label não definida";

@@ -572,7 +572,13 @@ vector<int> PARSER::passagem_unica(code_t code)
 							}
 						}
 					} else {
-						erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO, erros::COMP_ARG_INV)); 
+						if(!isSymbol(*token)) {
+							erros_list.push_back(erro_t(linha->nlinha,erros::LEXICO, erros::token_invalido)); 
+						
+						} else {
+							erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO, erros::COMP_ARG_INV)); 
+						
+						}
 					}
                 }
             }
@@ -582,40 +588,46 @@ vector<int> PARSER::passagem_unica(code_t code)
 				if (isNumber(*token)) {
 					obj_code.push_back(atoi(token->c_str()));
 				} else {
-					erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO, erros::COMP_ARG_INV)); 
+					if(!isSymbol(*token)) {
+						erros_list.push_back(erro_t(linha->nlinha,erros::LEXICO, erros::token_invalido)); 
+					
+					} else {
+						erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO, erros::COMP_ARG_INV)); 
+					
+					}
 				}
             }
 //TOKEN é uma label
             else if(islabel(*token))
             {
-                increment_add = 0; //Se for uma label não aumenta o endereço
-                int i = symbol_exists(token->substr(0, token->length() - 1));
+					increment_add = 0; //Se for uma label não aumenta o endereço
+					int i = symbol_exists(token->substr(0, token->length() - 1));
 
-				if(has_label) {
-					erros_list.push_back(erro_t(linha->nlinha,erros::SEMANTICO,erros::label_dupla)); 
-				}
+					if(has_label) {
+						erros_list.push_back(erro_t(linha->nlinha,erros::SEMANTICO,erros::label_dupla)); 
+					}
 
-				/*Se label ja existe*/
-                if (i > -1)
-                {
-                    if(simb_list[i].def)
-                    {
-						erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::label_redefinida)); 
-                    }
-                    else
-                    {
-                        simb_list[i].def = true;
-                        simb_list[i].value = PC;
-                        last_symbol = simb_list.begin() + i;
-                    }
+					/*Se label ja existe*/
+					if (i > -1)
+					{
+						if(simb_list[i].def)
+						{
+							erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO,erros::label_redefinida)); 
+						}
+						else
+						{
+							simb_list[i].def = true;
+							simb_list[i].value = PC;
+							last_symbol = simb_list.begin() + i;
+						}
 
-                }
-                else
-                {
-                    simb_list.push_back(smb_t(token->substr(0,token->length()-1), PC, true));
-                    last_symbol = simb_list.end() - 1;
-                }
-				has_label = true;
+					}
+					else
+					{
+						simb_list.push_back(smb_t(token->substr(0,token->length()-1), PC, true));
+						last_symbol = simb_list.end() - 1;
+					}
+					has_label = true;
             }
 //TOKEN é uma instrução
             else if(isinst(*token,rinst)) /**Refazer para melhorar a estrutura de instrucoes e diretivas**/
@@ -812,7 +824,13 @@ vector<int> PARSER::passagem_unica(code_t code)
 //Se não for nenhum destes, é inválido
 			else
 			{
-				erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO, erros::COMP_ARG_INV)); 
+				if(!isNumber(*token)) {
+					erros_list.push_back(erro_t(linha->nlinha,erros::LEXICO, erros::token_invalido)); 
+				} else {
+					erros_list.push_back(erro_t(linha->nlinha,erros::SINTATICO, erros::COMP_ARG_INV)); 
+				
+
+				}
 			}
             token++;
             PC+=increment_add; /**Nao pode contar diretivas**/
@@ -920,7 +938,7 @@ end_pass:
 			{
 			 	if(simb_list[i].div_list[j] && !valor_const)
 				{
-					erros_list.push_back(erro_t(simb_list[i].lista_nlinha[j],erros::SEMANTICO,erros::div_zero));
+					erros_list.push_back(erro_t(simb_list[i].lista_nlinha[j],erros::SINTATICO,erros::div_zero));
 				}
 			}
 		}
@@ -999,10 +1017,11 @@ int PARSER::symbol_exists(string procura)
 
 int PARSER::islabel(string _label)
 {
-    size_t found=_label.find(':');
-    if(found && _label[found+1] == '\0')
-        return OK;
-    return !OK;
+		size_t found=_label.find(':');
+		if(found && _label[found+1] == '\0')
+			return OK;
+		return !OK;
+	return !OK;
 }
 
 int PARSER::iscomment(string _comment)

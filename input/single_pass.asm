@@ -3,6 +3,10 @@ resto_macro: macro
 store RESTO
 output RESTO
 end
+teste: macro
+load QUOT
+store B
+end
 
 input B
 
@@ -16,8 +20,7 @@ store VOLTA
 load B
 sub VOLTA
 resto_macro
-load QUOT
-store B
+teste
 jmpp loop
 
 stop
