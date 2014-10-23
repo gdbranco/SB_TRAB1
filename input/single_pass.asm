@@ -24,7 +24,7 @@ stop
 
 SECTION DATA
 B: SPACE
-DOIS: CONST -2
+DOIS: CONST 2
 QUOT: SPACE
 resto: SPACE
 volta: space
