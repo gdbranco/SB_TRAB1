@@ -353,7 +353,7 @@ code_t PARSER::passagem_macros(code_t _code)
 				{
 					code.erase(m_beg, m_end + 1);
 				}
-				it = code.begin() + aux;
+				it = code.begin() + aux -1;
 			}
 
 
